@@ -6,8 +6,9 @@ interface ResourceMeterProps {
 
 export function ResourceMeter({ icon, label, value }: ResourceMeterProps) {
   return (
-    <span className="resource-meter" title={label}>
+    <span className="resource-meter">
       <span className="resource-meter-icon">{icon}</span>
+      <span className="resource-meter-label">{label}</span>
       {value}
     </span>
   );
