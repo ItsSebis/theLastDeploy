@@ -30,3 +30,7 @@
     - hard punishments for ignoring incidents
     - rarely incidents you have to ignore and they fix themselfes somehow, you just create an issue when reacting
 - way harder gameplay
+
+## Dev tooling
+- dev-mode debug box showing every current variable/value (resources, inventory, companion state, sprint/danger tier, etc.)
+- useful trigger buttons in that box to test functions, e.g. "give all items", or "highlight correct item on incidents" (toggle that marks the counter item during an incident)

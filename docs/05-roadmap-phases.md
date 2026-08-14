@@ -18,6 +18,19 @@ the cheapest to iterate on before backend work locks anything in.
 - **Goal: a friend can play a full run and it's fun**, even with joke placeholder
   content. Don't move on until this is true.
 
+### Phase 1, part two — scramble & interaction redesign (done)
+See `07-scramble-and-interaction-redesign.md`: reworked scramble into an
+explorable VS Code-style panel set, bespoke per-action sprint interactions, and
+a Runway shop. Implemented via commits `9d75bfb`..`278fbc1`, `65b58ca`, `e3952cb`.
+
+### Phase 1, part three — polish & depth (in progress)
+See `08-phase1-polish-and-depth.md` for the full ordered breakdown, organized
+from `Sebis Brain.md`: a dev debug overlay, UI bug fixes, scramble balance,
+gig-economy honesty, survival pacing, a companion relationship system, and
+ongoing content depth/variety. **Don't start Phase 2, 3, or 6 (save, login,
+tutorial) until at least Batches 0–D there are done** — a nice working game
+beats login, saves, or a tutorial.
+
 ## Phase 2 — Local save/resume
 - IndexedDB persistence of run state (autosave per sprint + manual save/quit).
 - Resume-on-load if a save exists; new-run confirmation if the player wants to
