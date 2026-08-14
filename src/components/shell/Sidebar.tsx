@@ -3,6 +3,7 @@ import { InventoryTree } from "./InventoryTree";
 import { ExplorerPanel } from "../scramble/ExplorerPanel";
 import { SourceControlPanel } from "../scramble/SourceControlPanel";
 import { ExtensionsPanel } from "../scramble/ExtensionsPanel";
+import { ContactsList } from "../sprint/ContactsList";
 import { useGameStore } from "../../store/gameStore";
 
 export function Sidebar() {
@@ -19,6 +20,7 @@ export function Sidebar() {
     <div className="sidebar">
       <InventoryTree />
       <CompanionPanel />
+      {phase === "sprint" && <ContactsList />}
     </div>
   );
 }
