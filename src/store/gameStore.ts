@@ -3,6 +3,8 @@ import type { ResourceKey } from "../content/types";
 import { companionsById, endings, events, itemsById } from "../content";
 import { evaluateEndings } from "./endingEvaluator";
 import { pickNightEvent } from "./eventSelector";
+import { resolveIncident } from "./incidentResolver";
+import { SHOP_ITEMS, applyPurchase, canPurchase } from "./shop";
 import {
   FOCUS_PER_SPRINT,
   FOCUS_PER_SPRINT_COFFEE_ZERO,
@@ -17,7 +19,7 @@ import {
   TAKE_OFFER_REPUTATION_THRESHOLD,
   TECH_DEBT_SPRINT_DRIFT,
 } from "./sprintEconomy";
-import type { GameState, LogEntry } from "./types";
+import type { ActivityTab, GameState, LogEntry } from "./types";
 import { randomSeed } from "../utils/rng";
 
 const BOUNDED_RESOURCES: readonly ResourceKey[] = ["coffee", "sanity", "reputation"];
@@ -75,6 +77,12 @@ function createInitialState(): GameState {
     endingId: null,
     log: [],
     scramble: { timeRemaining: SCRAMBLE_DURATION_SECONDS, grabbedItemIds: [] },
+    activityTab: "explorer",
+    openedFileId: null,
+    focusBonus: 0,
+    shopPurchases: [],
+    terminalPanelOpen: true,
+    terminalActiveTab: "terminal",
   };
 }
 
@@ -89,6 +97,11 @@ interface GameStore extends GameState {
   dismissIncident: () => void;
   takeTheOffer: () => void;
   restart: () => void;
+  setActivityTab: (tab: ActivityTab) => void;
+  openExplorerFile: (fileId: string) => void;
+  setTerminalTab: (tab: "terminal" | "problems") => void;
+  toggleTerminalPanel: () => void;
+  purchaseShopItem: (itemId: string) => void;
 }
 
 // Ends the current sprint: applies passive resource drift, checks forced-fail
@@ -133,7 +146,8 @@ function advanceSprint(state: GameState): Partial<GameState> {
     rngState: nextRngState,
     lastEventId: event.id,
     focusRemaining:
-      driftedResources.coffee <= 0 ? FOCUS_PER_SPRINT_COFFEE_ZERO : FOCUS_PER_SPRINT,
+      (driftedResources.coffee <= 0 ? FOCUS_PER_SPRINT_COFFEE_ZERO : FOCUS_PER_SPRINT) +
+      state.focusBonus,
     offerUnlocked: driftedResources.reputation >= TAKE_OFFER_REPUTATION_THRESHOLD,
     activeIncident: { event, resolution: null },
     log: [...state.log, makeLogEntry(nextSprintNumber, `Incident: ${event.name}`)],
@@ -189,6 +203,47 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
+  setActivityTab: (tab) => {
+    set({ activityTab: tab, openedFileId: null });
+  },
+
+  openExplorerFile: (fileId) => {
+    const state = get();
+    if (state.phase !== "scramble_loot" || state.scramble.timeRemaining <= 0) return;
+    set({ openedFileId: fileId });
+  },
+
+  setTerminalTab: (tab) => {
+    set({ terminalActiveTab: tab, terminalPanelOpen: true });
+  },
+
+  toggleTerminalPanel: () => {
+    set((state) => ({ terminalPanelOpen: !state.terminalPanelOpen }));
+  },
+
+  purchaseShopItem: (itemId) => {
+    const state = get();
+    if (state.phase !== "sprint") return;
+
+    const check = canPurchase(itemId, state.resources.runway, state.shopPurchases);
+    if (!check.allowed) return;
+
+    const effect = applyPurchase(itemId);
+    const shopItem = SHOP_ITEMS.find((i) => i.id === itemId)!;
+
+    let resources = applyEffects(state.resources, { runway: effect.runwayDelta });
+    if (effect.coffeeSetTo !== undefined) {
+      resources = { ...resources, coffee: clampResource("coffee", effect.coffeeSetTo) };
+    }
+
+    set({
+      resources,
+      focusBonus: state.focusBonus + effect.focusBonusDelta,
+      shopPurchases: [...state.shopPurchases, itemId],
+      log: [...state.log, makeLogEntry(state.sprintNumber, `Bought ${shopItem.name}`)],
+    });
+  },
+
   pickCompanion: (companionId) => {
     const state = get();
     if (state.phase !== "scramble_companion") return;
@@ -199,7 +254,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       companionId,
       phase: "sprint",
       sprintNumber: 1,
-      focusRemaining: FOCUS_PER_SPRINT,
+      focusRemaining: FOCUS_PER_SPRINT + state.focusBonus,
       log: [
         ...state.log,
         makeLogEntry(1, `${companion.name} joins you. Sprint 1 begins.`),
@@ -241,25 +296,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!state.activeIncident || state.activeIncident.resolution) return;
 
     const event = state.activeIncident.event;
-    const success = itemId !== null && event.counteredBy.includes(itemId);
-    const techDebtMultiplier = 1 + state.resources.techDebt / 100;
-
-    const resources = success
-      ? state.resources
-      : applyEffects(state.resources, event.failEffects, techDebtMultiplier);
+    const outcome = resolveIncident(event, itemId, state.resources.techDebt);
+    const resources = applyEffects(state.resources, outcome.effects, outcome.multiplier);
 
     const flags =
-      success && itemId && !state.flags.itemsUsed.includes(itemId)
+      outcome.success && itemId && !state.flags.itemsUsed.includes(itemId)
         ? { ...state.flags, itemsUsed: [...state.flags.itemsUsed, itemId] }
         : state.flags;
-
-    const resolutionText = success ? event.onCounteredText : event.onFailText;
 
     set({
       resources,
       flags,
-      activeIncident: { event, resolution: { success, text: resolutionText } },
-      log: [...state.log, makeLogEntry(state.sprintNumber, resolutionText)],
+      activeIncident: { event, resolution: { success: outcome.success, text: outcome.text } },
+      log: [...state.log, makeLogEntry(state.sprintNumber, outcome.text)],
     });
   },
 
