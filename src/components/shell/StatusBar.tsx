@@ -18,7 +18,7 @@ export function StatusBar() {
       <ResourceMeter icon="🧠" label="Sanity" value={resources.sanity} />
       <ResourceMeter icon="⭐" label="Reputation" value={resources.reputation} />
       <ResourceMeter icon="💰" label="Runway" value={resources.runway} />
-      <ProblemsBadge techDebt={resources.techDebt} />
+      {phase === "sprint" && <ProblemsBadge techDebt={resources.techDebt} />}
       {phase === "sprint" && (
         <button
           className="status-bar-rest"

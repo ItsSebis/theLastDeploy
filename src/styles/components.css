@@ -49,6 +49,14 @@
   font-weight: 600;
 }
 
+.tree-row-clickable {
+  cursor: pointer;
+}
+
+.tree-row-clickable:hover {
+  background: var(--vsc-bg-hover);
+}
+
 .tree-row-empty {
   padding: 3px 24px;
   color: var(--vsc-fg-muted);
@@ -217,44 +225,6 @@
   color: var(--vsc-accent-red);
 }
 
-.loot-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.loot-card {
-  background: var(--vsc-bg-input);
-  border: 1px solid var(--vsc-border);
-  border-radius: var(--vsc-radius);
-  padding: 12px;
-  text-align: left;
-  color: var(--vsc-fg-default);
-}
-
-.loot-card:hover:not(:disabled) {
-  border-color: var(--vsc-border-focus);
-  background: var(--vsc-bg-hover);
-}
-
-.loot-card.grabbed {
-  border-color: var(--vsc-accent-green);
-  background: var(--vsc-bg-selected);
-}
-
-.loot-card-name {
-  font-weight: 600;
-  margin-bottom: 4px;
-  font-size: 13px;
-}
-
-.loot-card-desc {
-  font-size: 11px;
-  color: var(--vsc-fg-muted);
-  line-height: 1.4;
-}
-
 .companion-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -303,12 +273,6 @@
   font-size: 12px;
 }
 
-.action-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .action-btn {
   display: flex;
   justify-content: space-between;
@@ -324,13 +288,6 @@
   font-size: 11px;
   color: var(--vsc-fg-muted);
   flex: 1;
-}
-
-.action-btn-cost {
-  font-family: var(--vsc-font-mono);
-  font-size: 11px;
-  color: var(--vsc-accent-yellow);
-  white-space: nowrap;
 }
 
 .action-btn.offer {
@@ -641,6 +598,7 @@
 
 .problems-badge {
   border: none;
+  background: none;
 }
 
 .companion-card-clickable {

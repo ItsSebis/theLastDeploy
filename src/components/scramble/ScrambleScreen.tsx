@@ -1,5 +1,6 @@
 import { useCountdown } from "../../hooks/useCountdown";
 import { useGameStore } from "../../store/gameStore";
+import { SCRAMBLE_INVENTORY_CAP } from "../../store/sprintEconomy";
 import { CompanionPicker } from "./CompanionPicker";
 import { FileViewer } from "./FileViewer";
 
@@ -19,7 +20,7 @@ export function ScrambleScreen() {
       <>
         <h1 className="narrative-title"># scramble.ts</h1>
         <div className="scramble-header">
-          <span>Grabbed {grabbedItemIds.length} / 4</span>
+          <span>Grabbed {grabbedItemIds.length} / {SCRAMBLE_INVENTORY_CAP}</span>
           <span className={`scramble-timer ${timeRemaining <= 10 ? "low" : ""}`}>{timeRemaining}s</span>
         </div>
         {activityTab === "explorer" ? (

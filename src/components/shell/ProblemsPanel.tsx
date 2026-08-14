@@ -8,7 +8,7 @@ export function ProblemsPanel() {
   const phase = useGameStore((s) => s.phase);
   const performAction = useGameStore((s) => s.performAction);
 
-  const count = Math.min(PROBLEM_FLAVORS.length, Math.max(1, Math.ceil(techDebt / 10)));
+  const count = Math.min(PROBLEM_FLAVORS.length, Math.ceil(techDebt / 10));
   const visibleProblems = PROBLEM_FLAVORS.slice(0, count);
   const canRefactor = phase === "sprint" && focusRemaining >= 1 && !activeIncident;
 

@@ -15,7 +15,7 @@ function ExplorerNodeRow({ node, depth }: { node: ExplorerNode; depth: number })
     return (
       <div>
         <div
-          className="tree-row folder"
+          className="tree-row tree-row-clickable folder"
           style={indent}
           onClick={() => setExpanded((v) => !v)}
         >
@@ -32,7 +32,7 @@ function ExplorerNodeRow({ node, depth }: { node: ExplorerNode; depth: number })
 
   return (
     <div
-      className={`tree-row ${openedFileId === node.id ? "active" : ""}`}
+      className={`tree-row tree-row-clickable ${openedFileId === node.id ? "active" : ""}`}
       style={indent}
       onClick={() => openExplorerFile(node.id)}
     >

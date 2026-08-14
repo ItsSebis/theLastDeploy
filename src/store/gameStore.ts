@@ -200,6 +200,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({
       phase: "scramble_companion",
       inventory: [...state.scramble.grabbedItemIds],
+      activityTab: "explorer",
+      openedFileId: null,
     });
   },
 
