@@ -1,0 +1,33 @@
+:root {
+  --vsc-bg-editor: #1e1e1e;
+  --vsc-bg-sidebar: #252526;
+  --vsc-bg-activitybar: #333333;
+  --vsc-bg-statusbar: #007acc;
+  --vsc-bg-titlebar: #3c3c3c;
+  --vsc-bg-panel: #1e1e1e;
+  --vsc-bg-panel-tab-active: #1e1e1e;
+  --vsc-bg-hover: #2a2d2e;
+  --vsc-bg-selected: #37373d;
+  --vsc-bg-input: #3c3c3c;
+  --vsc-bg-toast: #252526;
+
+  --vsc-border: #3c3c3c;
+  --vsc-border-focus: #007fd4;
+
+  --vsc-fg-default: #cccccc;
+  --vsc-fg-muted: #969696;
+  --vsc-fg-bright: #ffffff;
+  --vsc-fg-link: #3794ff;
+
+  --vsc-accent-blue: #007acc;
+  --vsc-accent-green: #89d185;
+  --vsc-accent-yellow: #cca700;
+  --vsc-accent-orange: #ce9178;
+  --vsc-accent-red: #f14c4c;
+  --vsc-accent-purple: #c586c0;
+
+  --vsc-font-ui: "Segoe UI", "Ubuntu", -apple-system, BlinkMacSystemFont, sans-serif;
+  --vsc-font-mono: "Cascadia Code", "Fira Code", ui-monospace, "SFMono-Regular", Consolas, "Courier New", monospace;
+
+  --vsc-radius: 3px;
+}

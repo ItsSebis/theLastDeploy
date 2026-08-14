@@ -1,0 +1,57 @@
+[
+  {
+    "id": "merge_conflict_kraken",
+    "name": "Merge Conflict Kraken",
+    "description": "Something ancient surfaces in `feature/checkout`. It has many arms and all of them are `<<<<<<< HEAD`.",
+    "counteredBy": ["rubber_duck"],
+    "onCounteredText": "You talk through every conflicting line, one by one. The Kraken sinks back into `main`, sated.",
+    "onFailText": "You resolve it by picking whichever side looks longer. Production disagrees with your choice.",
+    "failEffects": { "sanity": -10, "reputation": -5 },
+    "weight": 4,
+    "minSprint": 1
+  },
+  {
+    "id": "legacy_jquery_reawakens",
+    "name": "Legacy jQuery Reawakens",
+    "description": "A `$` appears in a file that shouldn't have one. Then another. The console fills with familiar, ancient warnings.",
+    "counteredBy": ["it_works_on_my_machine_badge"],
+    "onCounteredText": "You wrap it in a namespace and back away slowly. It goes still.",
+    "onFailText": "It spreads to two more files before you can stop it.",
+    "failEffects": { "sanity": -8, "techDebt": 10 },
+    "weight": 3,
+    "minSprint": 1
+  },
+  {
+    "id": "two_fa_lockout",
+    "name": "2FA Lockout",
+    "description": "Your phone is at 2%. The code expires in 30 seconds. It is, of course, the worst possible moment.",
+    "counteredBy": ["laptop_charger"],
+    "onCounteredText": "You plug in with seconds to spare and get the code through just in time.",
+    "onFailText": "You're locked out for the rest of the sprint, refreshing a support ticket queue.",
+    "failEffects": { "runway": -5, "sanity": -5 },
+    "weight": 3,
+    "minSprint": 1
+  },
+  {
+    "id": "friday_deploy_curse",
+    "name": "The Friday 5PM Deploy Curse",
+    "description": "Someone deployed on a Friday. At 5:03 PM. On purpose.",
+    "counteredBy": ["hotfix_script"],
+    "onCounteredText": "You roll it back before anyone notices. Mostly.",
+    "onFailText": "You spend the weekend un-breaking production.",
+    "failEffects": { "sanity": -15, "reputation": -5 },
+    "weight": 3,
+    "minSprint": 2
+  },
+  {
+    "id": "off_by_one_error",
+    "name": "Off-By-One Error Eats a Day",
+    "description": "The loop runs one too many times. Or one too few. It has already been six hours.",
+    "counteredBy": ["stack_overflow_bookmark"],
+    "onCounteredText": "You find the exact answer, third reply down, from 2011. It still works.",
+    "onFailText": "You lose the whole day to it and ship a workaround instead of a fix.",
+    "failEffects": { "runway": -8, "techDebt": 15 },
+    "weight": 2,
+    "minSprint": 3
+  }
+]

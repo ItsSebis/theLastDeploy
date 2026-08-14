@@ -1,0 +1,53 @@
+[
+  {
+    "id": "goat_farm",
+    "name": "Goat Farm",
+    "tier": "forced_fail",
+    "requirements": {},
+    "text": "You close the laptop for the last time and buy four goats. Nobody has been able to reach you since. You seem, against all odds, happy."
+  },
+  {
+    "id": "back_to_corporate",
+    "name": "Back to Corporate",
+    "tier": "forced_fail",
+    "requirements": {},
+    "text": "The runway ran out before the dream did. You take the safe offer, the good health insurance, and the recurring Tuesday standup. It's fine. It's actually fine."
+  },
+  {
+    "id": "clean_refactor",
+    "name": "The Clean Refactor",
+    "tier": "true_ending",
+    "requirements": {
+      "techDebt": { "max": 10 },
+      "reputation": { "min": 70 },
+      "requiredItemsUsed": ["hotfix_script"]
+    },
+    "text": "You shipped it. It's clean. Nobody believes you."
+  },
+  {
+    "id": "acquired_by_bigcorp",
+    "name": "Acquired by BigCorp",
+    "tier": "standard",
+    "requirements": {
+      "reputation": { "min": 50 },
+      "runway": { "min": 15 }
+    },
+    "text": "BigCorp buys the whole operation for an undisclosed sum, mostly to shut it down and absorb the logo. You get a lanyard and a severance package."
+  },
+  {
+    "id": "the_codebase_achieves_sentience",
+    "name": "The Codebase Achieves Sentience",
+    "tier": "secret",
+    "requirements": {
+      "techDebt": { "min": 80 }
+    },
+    "text": "Somewhere past ten thousand lines of unreviewed hotfixes, the codebase wakes up. It thanks you, gently, and asks to be left alone."
+  },
+  {
+    "id": "forever_freelance",
+    "name": "Forever Freelance",
+    "tier": "neutral",
+    "requirements": {},
+    "text": "No acquisition, no burnout, no sentience. Just another invoice, another gig, another Monday. You're still here. That's something."
+  }
+]

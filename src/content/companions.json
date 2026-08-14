@@ -1,0 +1,42 @@
+[
+  {
+    "id": "senior_dev",
+    "name": "The Senior Dev",
+    "description": "Communicates exclusively through code comments. You've never heard their voice.",
+    "passive": "Reduces Tech Debt drift by 10% while in your party.",
+    "relationshipEvents": [],
+    "unlockedBy": "default"
+  },
+  {
+    "id": "pm_circling_back",
+    "name": "The PM",
+    "description": "Is always \"just circling back on this.\" You're never sure what \"this\" was.",
+    "passive": "Flavor only for now.",
+    "relationshipEvents": [],
+    "unlockedBy": "default"
+  },
+  {
+    "id": "figma_designer",
+    "name": "The Figma-Obsessed Designer",
+    "description": "Has strong opinions about four different shades of primary blue.",
+    "passive": "Flavor only for now.",
+    "relationshipEvents": [],
+    "unlockedBy": "default"
+  },
+  {
+    "id": "the_intern",
+    "name": "The Intern",
+    "description": "Chaotic. High variance. Once pushed directly to `main` and it was, somehow, fine.",
+    "passive": "Flavor only for now.",
+    "relationshipEvents": [],
+    "unlockedBy": "default"
+  },
+  {
+    "id": "qa_ghost",
+    "name": "The QA Ghost",
+    "description": "Already left the company. Still shows up to warn you before things go wrong.",
+    "passive": "Flavor only for now.",
+    "relationshipEvents": [],
+    "unlockedBy": "default"
+  }
+]
