@@ -30,6 +30,7 @@ during implementation, but keep the separation of content from code.
   "onFailText": "You spend the weekend un-breaking production.",
   "failEffects": { "sanity": -15, "reputation": -5 },
   "successEffects": { "reputation": 5 },
+  "danger": "high",
   "weight": 3,
   "minSprint": 2
 }
@@ -39,6 +40,11 @@ during implementation, but keep the separation of content from code.
   successful counter instead of a fail/ignore. Most events omit it (a
   successful counter has no bonus, per the game design). Present only on
   "rare" items' events (see 07-scramble-and-interaction-redesign.md).
+- `danger` (optional) tags an event `"low" | "medium" | "high"`; it
+  soft-biases weighted selection toward the run's current danger tier
+  (derived from Tech Debt) via a multiplier table, not a hard filter — see
+  `dangerTierFromTechDebt`/`DANGER_WEIGHT_MULTIPLIER` in
+  `src/store/sprintEconomy.ts`. Absent on content that predates it.
 
 ## Companion
 

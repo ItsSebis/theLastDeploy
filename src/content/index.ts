@@ -18,4 +18,4 @@ export const eventsById = toMap(events);
 export const companionsById = toMap(companions);
 export const endingsById = toMap(endings);
 
-export type { Companion, Ending, EndingRequirements, Item, NightEvent, ResourceKey } from "./types";
+export type { Companion, Ending, EndingRequirements, EventDanger, Item, NightEvent, ResourceKey } from "./types";

@@ -1,7 +1,8 @@
 import { useGameStore } from "../../store/gameStore";
-import { IncidentToastContainer } from "../incident/IncidentToastContainer";
+import { IncidentOverlay } from "../incident/IncidentOverlay";
 import { ActivityBar } from "./ActivityBar";
 import { CoffeeRail } from "./common/CoffeeRail";
+import { DayTransitionOverlay } from "./common/DayTransitionOverlay";
 import { EditorArea } from "./EditorArea";
 import { Sidebar } from "./Sidebar";
 import { StatusBar } from "./StatusBar";
@@ -18,7 +19,8 @@ export function AppShell() {
       <TerminalPanel />
       <CoffeeRail value={coffee} />
       <StatusBar />
-      <IncidentToastContainer />
+      <IncidentOverlay />
+      <DayTransitionOverlay />
     </div>
   );
 }

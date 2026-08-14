@@ -20,7 +20,8 @@ export function SprintScreen() {
         <>
           <p className="narrative-subtitle">
             Click the 🐛 badge to refactor, check in with your companion or a contact in the
-            sidebar to network, or go 🛋 Away in the status bar to rest.
+            sidebar to network, or go 🛋 Away in the status bar to rest. Once you're out of
+            focus, Away turns into 🌙 End Day.
           </p>
           <GigBoard />
           {offerUnlocked && (

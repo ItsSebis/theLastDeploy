@@ -7,6 +7,7 @@
     "onCounteredText": "You talk through every conflicting line, one by one. The Kraken sinks back into `main`, sated.",
     "onFailText": "You resolve it by picking whichever side looks longer. Production disagrees with your choice.",
     "failEffects": { "sanity": -10, "reputation": -5 },
+    "danger": "medium",
     "weight": 4,
     "minSprint": 1
   },
@@ -18,6 +19,7 @@
     "onCounteredText": "You wrap it in a namespace and back away slowly. It goes still.",
     "onFailText": "It spreads to two more files before you can stop it.",
     "failEffects": { "sanity": -8, "techDebt": 10 },
+    "danger": "medium",
     "weight": 3,
     "minSprint": 1
   },
@@ -29,6 +31,7 @@
     "onCounteredText": "You plug in with seconds to spare and get the code through just in time.",
     "onFailText": "You're locked out for the rest of the sprint, refreshing a support ticket queue.",
     "failEffects": { "runway": -5, "sanity": -5 },
+    "danger": "medium",
     "weight": 3,
     "minSprint": 1
   },
@@ -40,6 +43,7 @@
     "onCounteredText": "You roll it back before anyone notices. Mostly.",
     "onFailText": "You spend the weekend un-breaking production.",
     "failEffects": { "sanity": -15, "reputation": -5 },
+    "danger": "high",
     "weight": 3,
     "minSprint": 2
   },
@@ -51,6 +55,7 @@
     "onCounteredText": "You find the exact answer, third reply down, from 2011. It still works.",
     "onFailText": "You lose the whole day to it and ship a workaround instead of a fix.",
     "failEffects": { "runway": -8, "techDebt": 15 },
+    "danger": "high",
     "weight": 2,
     "minSprint": 3
   },
@@ -63,7 +68,95 @@
     "onFailText": "Three days of history, gone. You start rewriting from memory.",
     "failEffects": { "sanity": -20, "techDebt": 20, "reputation": -10 },
     "successEffects": { "reputation": 5 },
+    "danger": "high",
     "weight": 1,
     "minSprint": 2
+  },
+  {
+    "id": "scope_creep_gremlin",
+    "name": "Scope Creep Gremlin",
+    "description": "It started as \"just one small tweak.\" There are now fourteen tweaks. The gremlin is feeding.",
+    "counteredBy": ["signed_nda"],
+    "onCounteredText": "You point to the signed scope in the contract. The gremlin hisses and shrinks back to size.",
+    "onFailText": "You say yes to \"just one more thing\" for the fifth time this week.",
+    "failEffects": { "sanity": -10, "runway": -5 },
+    "danger": "medium",
+    "weight": 3,
+    "minSprint": 2
+  },
+  {
+    "id": "circling_back_ghost",
+    "name": "\"Just Circling Back on This\"",
+    "description": "A Slack thread from three weeks ago rises from the dead. It has three new participants and no new information.",
+    "counteredBy": ["readme_nobody_wrote"],
+    "onCounteredText": "You link the README nobody wrote. Technically, this is an answer. The thread goes quiet.",
+    "onFailText": "You reply \"looping in @here\" and immediately regret it.",
+    "failEffects": { "sanity": -6 },
+    "successEffects": { "sanity": 2 },
+    "danger": "low",
+    "weight": 4,
+    "minSprint": 1
+  },
+  {
+    "id": "standup_that_would_not_end",
+    "name": "Standup That Would Not End",
+    "description": "It is 47 minutes long. Someone is sharing their screen. Nobody knows why.",
+    "counteredBy": ["tabs_vs_spaces_allegiance"],
+    "onCounteredText": "You reignite the tabs-vs-spaces debate. The meeting collapses in on itself and everyone leaves.",
+    "onFailText": "You get your 90 seconds of update time back. Eventually.",
+    "failEffects": { "sanity": -8, "coffee": -5 },
+    "successEffects": { "sanity": 3 },
+    "danger": "low",
+    "weight": 4,
+    "minSprint": 1
+  },
+  {
+    "id": "aws_bill_spike",
+    "name": "The AWS Bill 10x'd Overnight",
+    "description": "A dashboard nobody checks just turned very, very red. Someone left a loop running. It has been running for nine days.",
+    "counteredBy": ["stack_overflow_bookmark"],
+    "onCounteredText": "The exact fix, third reply down, from 2014. You kill the runaway instance with seconds to spare on the billing cycle.",
+    "onFailText": "You eat the bill. You will be thinking about this bill for the rest of the month.",
+    "failEffects": { "runway": -15, "sanity": -8 },
+    "danger": "high",
+    "weight": 2,
+    "minSprint": 3
+  },
+  {
+    "id": "intern_pushed_to_main",
+    "name": "The Intern Pushed Directly to Main",
+    "description": "There was no branch. There was no PR. There was, briefly, no CI pipeline either.",
+    "counteredBy": ["the_one_working_unit_test"],
+    "onCounteredText": "The one working unit test catches it before it ships. Nobody knows why that test still works. You thank it silently.",
+    "onFailText": "It ships. You spend the afternoon writing a very calm Slack message.",
+    "failEffects": { "techDebt": 12, "reputation": -5 },
+    "danger": "medium",
+    "weight": 3,
+    "minSprint": 2
+  },
+  {
+    "id": "cve_alert",
+    "name": "Critical CVE Alert",
+    "description": "A dependency four levels deep in node_modules has a critical vulnerability. It was published nine minutes ago. Security is already asking questions.",
+    "counteredBy": ["hotfix_script"],
+    "onCounteredText": "hotfix_FINAL_v2_ACTUALLY_FINAL.sh patches it in prod before the scan re-runs. You will never speak of this again.",
+    "onFailText": "You open a ticket. The ticket opens a meeting. The meeting opens three more tickets.",
+    "failEffects": { "techDebt": 15, "sanity": -8 },
+    "danger": "high",
+    "weight": 2,
+    "minSprint": 2
+  },
+  {
+    "id": "cookie_consent_banner",
+    "name": "Cookie Consent Banner Blocks the Demo",
+    "description": "The banner will not go away. The client can see it. It is, somehow, the only thing anyone comments on.",
+    "counteredBy": ["it_works_on_my_machine_badge"],
+    "onCounteredText": "You wave the badge, blame the client's ad blocker, and move the demo along.",
+    "onFailText": "You spend ten minutes of the demo explaining GDPR.",
+    "failEffects": { "reputation": -6, "sanity": -3 },
+    "successEffects": { "reputation": 2 },
+    "danger": "low",
+    "weight": 3,
+    "minSprint": 1
   }
 ]

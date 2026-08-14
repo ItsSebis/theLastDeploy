@@ -10,6 +10,11 @@ export interface Item {
   flavorOnUse: string;
 }
 
+// Documents the intended values of NightEvent.danger below; kept as `string`
+// on the interface itself so plain JSON content (typed broadly by TS) still
+// satisfies it (same accommodation as EndingTier/Ending.tier below).
+export type EventDanger = "low" | "medium" | "high";
+
 export interface NightEvent {
   id: string;
   name: string;
@@ -19,6 +24,9 @@ export interface NightEvent {
   onFailText: string;
   failEffects: Partial<Record<ResourceKey, number>>;
   successEffects?: Partial<Record<ResourceKey, number>>;
+  // Soft-biases weighted event selection toward the run's current danger
+  // tier (see sprintEconomy.ts); optional, absent on content that predates it.
+  danger?: string;
   weight: number;
   minSprint?: number;
   maxSprint?: number;

@@ -11,7 +11,7 @@
     "id": "it_works_on_my_machine_badge",
     "name": "\"It Works On My Machine\" Badge",
     "description": "A laminated badge of denial. Deflects blame on contact.",
-    "counters": ["legacy_jquery_reawakens"],
+    "counters": ["legacy_jquery_reawakens", "cookie_consent_banner"],
     "unlockedBy": "default",
     "flavorOnUse": "You pin the badge on. The jQuery hisses and retreats to a $(document).ready() block."
   },
@@ -19,7 +19,7 @@
     "id": "stack_overflow_bookmark",
     "name": "Stack Overflow Bookmark",
     "description": "Closed as duplicate. Still the only answer that works.",
-    "counters": ["off_by_one_error"],
+    "counters": ["off_by_one_error", "aws_bill_spike"],
     "unlockedBy": "default",
     "flavorOnUse": "You add one to the loop. Or subtract one. You forget which, again."
   },
@@ -27,7 +27,7 @@
     "id": "hotfix_script",
     "name": "Hotfix Script",
     "description": "hotfix_FINAL_v2_ACTUALLY_FINAL.sh. Never tested. Always run.",
-    "counters": ["friday_deploy_curse"],
+    "counters": ["friday_deploy_curse", "cve_alert"],
     "unlockedBy": "default",
     "flavorOnUse": "You run it in prod. It works. You will never speak of this again."
   },
@@ -43,7 +43,7 @@
     "id": "signed_nda",
     "name": "Signed NDA",
     "description": "You can't legally say what this does. Or if it does anything.",
-    "counters": [],
+    "counters": ["scope_creep_gremlin"],
     "unlockedBy": "default",
     "flavorOnUse": "You reread it. It remains a piece of paper."
   },
@@ -51,7 +51,7 @@
     "id": "tabs_vs_spaces_allegiance",
     "name": "Tabs vs. Spaces Allegiance",
     "description": "A faction, not a tool. You picked a side in 2019 and never looked back.",
-    "counters": [],
+    "counters": ["standup_that_would_not_end"],
     "unlockedBy": "default",
     "flavorOnUse": "You hold it up like a shield. Nobody is impressed."
   },
@@ -59,7 +59,7 @@
     "id": "readme_nobody_wrote",
     "name": "A README Nobody Wrote",
     "description": "Blank except for a single TODO from three years ago.",
-    "counters": [],
+    "counters": ["circling_back_ghost"],
     "unlockedBy": "default",
     "flavorOnUse": "You read it again, hoping new words appeared. They didn't."
   },
@@ -67,7 +67,7 @@
     "id": "the_one_working_unit_test",
     "name": "The One Working Unit Test",
     "description": "It passes. Nobody knows why. Nobody dares touch it.",
-    "counters": [],
+    "counters": ["intern_pushed_to_main"],
     "unlockedBy": "default",
     "flavorOnUse": "You run it for comfort. Green checkmark. All is well, briefly."
   },

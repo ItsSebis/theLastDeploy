@@ -26,8 +26,10 @@ export function StatusBar() {
   const focusRemaining = useGameStore((s) => s.focusRemaining);
   const activeIncident = useGameStore((s) => s.activeIncident);
   const performAction = useGameStore((s) => s.performAction);
+  const endSprint = useGameStore((s) => s.endSprint);
 
-  const canRest = phase === "sprint" && focusRemaining >= 1 && !activeIncident;
+  const awayEnabled = phase === "sprint" && !activeIncident;
+  const isEndDay = focusRemaining === 0;
 
   return (
     <div className="status-bar">
@@ -37,12 +39,12 @@ export function StatusBar() {
       {phase === "sprint" && <ProblemsBadge techDebt={resources.techDebt} />}
       {phase === "sprint" && (
         <button
-          className="status-bar-rest"
-          disabled={!canRest}
-          onClick={() => performAction("rest")}
-          title="Rest"
+          className={`status-bar-rest${isEndDay ? " end-day" : ""}`}
+          disabled={!awayEnabled}
+          onClick={() => (isEndDay ? endSprint() : performAction("rest"))}
+          title={isEndDay ? "End the sprint" : "Rest"}
         >
-          🛋 Away
+          {isEndDay ? "🌙 End Day" : "🛋 Away"}
         </button>
       )}
       <span className="status-bar-spacer" />

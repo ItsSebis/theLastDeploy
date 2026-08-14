@@ -6,8 +6,10 @@ import { pickNightEvent } from "./eventSelector";
 import { resolveIncident } from "./incidentResolver";
 import { SHOP_ITEMS, applyPurchase, canPurchase } from "./shop";
 import {
+  dangerTierFromTechDebt,
   FOCUS_PER_SPRINT,
   FOCUS_PER_SPRINT_COFFEE_ZERO,
+  PEACEFUL_NIGHT_CHANCE,
   RESOURCE_MAX,
   RESOURCE_MIN,
   RUNWAY_SPRINT_DRIFT,
@@ -20,7 +22,7 @@ import {
   TECH_DEBT_SPRINT_DRIFT,
 } from "./sprintEconomy";
 import type { ActivityTab, GameState, LogEntry } from "./types";
-import { randomSeed } from "../utils/rng";
+import { nextRandom, randomSeed } from "../utils/rng";
 
 const BOUNDED_RESOURCES: readonly ResourceKey[] = ["coffee", "sanity", "reputation"];
 
@@ -93,6 +95,7 @@ interface GameStore extends GameState {
   stopScramble: () => void;
   pickCompanion: (companionId: string) => void;
   performAction: (actionId: string) => void;
+  endSprint: () => void;
   respondToIncident: (itemId: string | null) => void;
   dismissIncident: () => void;
   takeTheOffer: () => void;
@@ -133,22 +136,42 @@ function advanceSprint(state: GameState): Partial<GameState> {
   }
 
   const nextSprintNumber = state.sprintNumber + 1;
-  const { event, nextRngState } = pickNightEvent(
-    events,
-    nextSprintNumber,
-    state.lastEventId,
-    state.rngState,
-  );
+  const dangerTier = dangerTierFromTechDebt(driftedResources.techDebt);
 
-  return {
+  const baseUpdate: Partial<GameState> = {
     resources: driftedResources,
     sprintNumber: nextSprintNumber,
-    rngState: nextRngState,
-    lastEventId: event.id,
     focusRemaining:
       (driftedResources.coffee <= 0 ? FOCUS_PER_SPRINT_COFFEE_ZERO : FOCUS_PER_SPRINT) +
       state.focusBonus,
     offerUnlocked: driftedResources.reputation >= TAKE_OFFER_REPUTATION_THRESHOLD,
+  };
+
+  const { value: peacefulRoll, nextState: afterPeacefulState } = nextRandom(state.rngState);
+  if (peacefulRoll < PEACEFUL_NIGHT_CHANCE[dangerTier]) {
+    return {
+      ...baseUpdate,
+      rngState: afterPeacefulState,
+      activeIncident: null,
+      log: [
+        ...state.log,
+        makeLogEntry(nextSprintNumber, "A quiet night. Nothing on fire, for once."),
+      ],
+    };
+  }
+
+  const { event, nextRngState } = pickNightEvent(
+    events,
+    nextSprintNumber,
+    state.lastEventId,
+    afterPeacefulState,
+    dangerTier,
+  );
+
+  return {
+    ...baseUpdate,
+    rngState: nextRngState,
+    lastEventId: event.id,
     activeIncident: { event, resolution: null },
     log: [...state.log, makeLogEntry(nextSprintNumber, `Incident: ${event.name}`)],
   };
@@ -278,19 +301,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
         ? { ...state.flags, relationshipLevel: state.flags.relationshipLevel + 1 }
         : state.flags;
 
-    const withAction: GameState = {
-      ...state,
+    set({
       resources,
       focusRemaining,
       flags,
       log: [...state.log, makeLogEntry(state.sprintNumber, action.name)],
-    };
+    });
+  },
 
-    if (focusRemaining <= 0) {
-      set({ ...withAction, ...advanceSprint(withAction) });
-    } else {
-      set(withAction);
-    }
+  endSprint: () => {
+    const state = get();
+    if (state.phase !== "sprint" || state.activeIncident) return;
+    if (state.focusRemaining > 0) return;
+    set(advanceSprint(state));
   },
 
   respondToIncident: (itemId) => {

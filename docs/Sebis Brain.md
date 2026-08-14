@@ -1,10 +1,8 @@
-## General
-- Clear end of day and start of next with overlay (something like the command bar ontop of the ide)
-- Events show at night in the middle, no simple list of what to do, highlight the items somehow and on hover make them clickable, but dont say before what they do.
-    - Some items should have more serious consequences for certain events
+## Design
+- The overall design ofcourse stays VS Code based, but when the game seems tireding there needs to be some creative enchancing effect
 
-## Events
-- more Events!
-- danger level
-    - higher danger level gives worse events, low danger level good events
-- peaceful nights
+## Scramble
+- Much more code, which doesn't have items to confuse the player
+- Put Items where they make sense, like the git stash item in the versioning
+- Remove the limit of 4 items, in the future with many more events it will be way more difficult to survive with even 4 items
+- Balance the time so you cant collect everything, or only if you are very fast
