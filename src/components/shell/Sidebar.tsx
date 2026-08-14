@@ -4,6 +4,7 @@ import { ExplorerPanel } from "../scramble/ExplorerPanel";
 import { SourceControlPanel } from "../scramble/SourceControlPanel";
 import { ExtensionsPanel } from "../scramble/ExtensionsPanel";
 import { ContactsList } from "../sprint/ContactsList";
+import { ShopPanel } from "../shop/ShopPanel";
 import { useGameStore } from "../../store/gameStore";
 
 export function Sidebar() {
@@ -14,6 +15,10 @@ export function Sidebar() {
     if (activityTab === "source_control") return <div className="sidebar"><SourceControlPanel /></div>;
     if (activityTab === "extensions") return <div className="sidebar"><ExtensionsPanel /></div>;
     return <div className="sidebar"><ExplorerPanel /></div>;
+  }
+
+  if (phase === "sprint" && activityTab === "shop") {
+    return <div className="sidebar"><ShopPanel /></div>;
   }
 
   return (
