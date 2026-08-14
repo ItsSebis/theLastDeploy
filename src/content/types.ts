@@ -18,6 +18,7 @@ export interface NightEvent {
   onCounteredText: string;
   onFailText: string;
   failEffects: Partial<Record<ResourceKey, number>>;
+  successEffects?: Partial<Record<ResourceKey, number>>;
   weight: number;
   minSprint?: number;
   maxSprint?: number;

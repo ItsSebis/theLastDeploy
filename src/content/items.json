@@ -70,5 +70,13 @@
     "counters": [],
     "unlockedBy": "default",
     "flavorOnUse": "You run it for comfort. Green checkmark. All is well, briefly."
+  },
+  {
+    "id": "git_stash",
+    "name": "A Stash You Forgot About",
+    "description": "git stash list. Three entries. You have no memory of any of them.",
+    "counters": ["force_pushed_to_main"],
+    "unlockedBy": "default",
+    "flavorOnUse": "You pop the stash. It's exactly what you needed. You don't ask why."
   }
 ]

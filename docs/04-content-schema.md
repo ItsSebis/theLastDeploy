@@ -29,10 +29,16 @@ during implementation, but keep the separation of content from code.
   "onCounteredText": "You roll it back before anyone notices. Mostly.",
   "onFailText": "You spend the weekend un-breaking production.",
   "failEffects": { "sanity": -15, "reputation": -5 },
+  "successEffects": { "reputation": 5 },
   "weight": 3,
   "minSprint": 2
 }
 ```
+
+- `successEffects` (optional) works like `failEffects` but applies on a
+  successful counter instead of a fail/ignore. Most events omit it (a
+  successful counter has no bonus, per the game design). Present only on
+  "rare" items' events (see 07-scramble-and-interaction-redesign.md).
 
 ## Companion
 

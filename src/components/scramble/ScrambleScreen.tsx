@@ -1,24 +1,36 @@
 import { useCountdown } from "../../hooks/useCountdown";
 import { useGameStore } from "../../store/gameStore";
+import { SCRAMBLE_INVENTORY_CAP } from "../../store/sprintEconomy";
 import { CompanionPicker } from "./CompanionPicker";
-import { LootGrid } from "./LootGrid";
+import { FileViewer } from "./FileViewer";
 
 export function ScrambleScreen() {
   const phase = useGameStore((s) => s.phase);
+  const activityTab = useGameStore((s) => s.activityTab);
   const tickScrambleTimer = useGameStore((s) => s.tickScrambleTimer);
+  const timeRemaining = useGameStore((s) => s.scramble.timeRemaining);
+  const grabbedItemIds = useGameStore((s) => s.scramble.grabbedItemIds);
+  const stopScramble = useGameStore((s) => s.stopScramble);
 
   useCountdown(phase === "scramble_loot", tickScrambleTimer);
 
   if (phase === "scramble_loot") {
+    const timeUp = timeRemaining <= 0;
     return (
       <>
         <h1 className="narrative-title"># scramble.ts</h1>
-        <p className="narrative-subtitle">
-          Access to the repo expires when the clock hits zero. Grab what you can carry —
-          you can bring {""}
-          <strong>4</strong> things with you.
-        </p>
-        <LootGrid />
+        <div className="scramble-header">
+          <span>Grabbed {grabbedItemIds.length} / {SCRAMBLE_INVENTORY_CAP}</span>
+          <span className={`scramble-timer ${timeRemaining <= 10 ? "low" : ""}`}>{timeRemaining}s</span>
+        </div>
+        {activityTab === "explorer" ? (
+          <FileViewer />
+        ) : (
+          <p className="narrative-subtitle">Browse the list on the left.</p>
+        )}
+        <button className="btn btn-primary" onClick={stopScramble} disabled={timeUp} style={{ marginTop: 16 }}>
+          {grabbedItemIds.length === 0 ? "Leave empty-handed" : "I'm done grabbing"}
+        </button>
       </>
     );
   }
@@ -26,9 +38,7 @@ export function ScrambleScreen() {
   return (
     <>
       <h1 className="narrative-title"># scramble.ts</h1>
-      <p className="narrative-subtitle">
-        One seat left on the way out. Who do you bring?
-      </p>
+      <p className="narrative-subtitle">One seat left on the way out. Who do you bring?</p>
       <CompanionPicker />
     </>
   );

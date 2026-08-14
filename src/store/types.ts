@@ -2,6 +2,8 @@ import type { NightEvent, ResourceKey } from "../content/types";
 
 export type GamePhase = "intro" | "scramble_loot" | "scramble_companion" | "sprint" | "ending";
 
+export type ActivityTab = "explorer" | "source_control" | "extensions" | "shop";
+
 export interface LogEntry {
   id: string;
   sprintNumber: number;
@@ -45,4 +47,10 @@ export interface GameState {
   endingId: string | null;
   log: LogEntry[];
   scramble: ScrambleState;
+  activityTab: ActivityTab;
+  openedFileId: string | null;
+  focusBonus: number;
+  shopPurchases: string[];
+  terminalPanelOpen: boolean;
+  terminalActiveTab: "terminal" | "problems";
 }

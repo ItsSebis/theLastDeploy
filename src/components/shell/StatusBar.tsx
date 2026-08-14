@@ -6,6 +6,11 @@ export function StatusBar() {
   const resources = useGameStore((s) => s.resources);
   const phase = useGameStore((s) => s.phase);
   const sprintNumber = useGameStore((s) => s.sprintNumber);
+  const focusRemaining = useGameStore((s) => s.focusRemaining);
+  const activeIncident = useGameStore((s) => s.activeIncident);
+  const performAction = useGameStore((s) => s.performAction);
+
+  const canRest = phase === "sprint" && focusRemaining >= 1 && !activeIncident;
 
   return (
     <div className="status-bar">
@@ -13,11 +18,19 @@ export function StatusBar() {
       <ResourceMeter icon="🧠" label="Sanity" value={resources.sanity} />
       <ResourceMeter icon="⭐" label="Reputation" value={resources.reputation} />
       <ResourceMeter icon="💰" label="Runway" value={resources.runway} />
-      <ProblemsBadge techDebt={resources.techDebt} />
-      <span className="status-bar-spacer" />
+      {phase === "sprint" && <ProblemsBadge techDebt={resources.techDebt} />}
       {phase === "sprint" && (
-        <span className="status-bar-sprint">Sprint {sprintNumber}</span>
+        <button
+          className="status-bar-rest"
+          disabled={!canRest}
+          onClick={() => performAction("rest")}
+          title="Rest"
+        >
+          🛋 Away
+        </button>
       )}
+      <span className="status-bar-spacer" />
+      {phase === "sprint" && <span className="status-bar-sprint">Sprint {sprintNumber}</span>}
     </div>
   );
 }

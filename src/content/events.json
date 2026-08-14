@@ -53,5 +53,17 @@
     "failEffects": { "runway": -8, "techDebt": 15 },
     "weight": 2,
     "minSprint": 3
+  },
+  {
+    "id": "force_pushed_to_main",
+    "name": "Force-Pushed to Main",
+    "description": "Someone force-pushed to `main`. The last few days of commits are... gone? Maybe? Nobody's sure.",
+    "counteredBy": ["git_stash"],
+    "onCounteredText": "You had a stash from two days ago. Crisis averted. The team buys you coffee.",
+    "onFailText": "Three days of history, gone. You start rewriting from memory.",
+    "failEffects": { "sanity": -20, "techDebt": 20, "reputation": -10 },
+    "successEffects": { "reputation": 5 },
+    "weight": 1,
+    "minSprint": 2
   }
 ]
