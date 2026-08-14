@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { ResourceKey } from "../content/types";
-import { companionsById, endings, events, itemsById } from "../content";
+import { companionsById, endings, endingsById, events, eventsById, itemsById } from "../content";
 import { evaluateEndings } from "./endingEvaluator";
 import { pickNightEvent } from "./eventSelector";
 import { resolveIncident } from "./incidentResolver";
@@ -85,6 +85,7 @@ function createInitialState(): GameState {
     shopPurchases: [],
     terminalPanelOpen: true,
     terminalActiveTab: "terminal",
+    debugHighlightCounters: false,
   };
 }
 
@@ -105,6 +106,11 @@ interface GameStore extends GameState {
   setTerminalTab: (tab: "terminal" | "problems") => void;
   toggleTerminalPanel: () => void;
   purchaseShopItem: (itemId: string) => void;
+  debugGiveAllItems: () => void;
+  debugForceEvent: (eventId: string) => void;
+  debugSetEnding: (endingId: string) => void;
+  debugSetResource: (key: ResourceKey, value: number) => void;
+  debugToggleHighlight: () => void;
 }
 
 // Ends the current sprint: applies passive resource drift, checks forced-fail
@@ -375,5 +381,34 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   restart: () => {
     get().startNewRun();
+  },
+
+  debugGiveAllItems: () => {
+    if (!import.meta.env.DEV) return;
+    set({ inventory: Object.keys(itemsById) });
+  },
+
+  debugForceEvent: (eventId) => {
+    if (!import.meta.env.DEV) return;
+    const event = eventsById[eventId];
+    if (!event) return;
+    set({ activeIncident: { event, resolution: null } });
+  },
+
+  debugSetEnding: (endingId) => {
+    if (!import.meta.env.DEV) return;
+    if (!endingsById[endingId]) return;
+    set({ phase: "ending", endingId });
+  },
+
+  debugSetResource: (key, value) => {
+    if (!import.meta.env.DEV) return;
+    const state = get();
+    set({ resources: { ...state.resources, [key]: clampResource(key, value) } });
+  },
+
+  debugToggleHighlight: () => {
+    if (!import.meta.env.DEV) return;
+    set((state) => ({ debugHighlightCounters: !state.debugHighlightCounters }));
   },
 }));

@@ -3,6 +3,11 @@ import { useGameStore } from "../../store/gameStore";
 
 export function InventoryTree() {
   const inventory = useGameStore((s) => s.inventory);
+  const activeIncident = useGameStore((s) => s.activeIncident);
+  const respondToIncident = useGameStore((s) => s.respondToIncident);
+  const debugHighlightCounters = useGameStore((s) => s.debugHighlightCounters);
+
+  const respondable = !!activeIncident && !activeIncident.resolution;
 
   return (
     <div className="sidebar-section">
@@ -14,6 +19,25 @@ export function InventoryTree() {
         inventory.map((itemId) => {
           const item = itemsById[itemId];
           if (!item) return null;
+
+          const highlighted =
+            respondable &&
+            debugHighlightCounters &&
+            activeIncident!.event.counteredBy.includes(itemId);
+
+          if (respondable) {
+            return (
+              <div
+                className={`tree-row tree-row-clickable tree-row-respondable ${highlighted ? "tree-row-highlight" : ""}`}
+                key={itemId}
+                title={item.description}
+                onClick={() => respondToIncident(itemId)}
+              >
+                📄 {item.name}
+              </div>
+            );
+          }
+
           return (
             <div className="tree-row" key={itemId} title={item.description}>
               📄 {item.name}

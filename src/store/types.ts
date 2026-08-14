@@ -53,4 +53,5 @@ export interface GameState {
   shopPurchases: string[];
   terminalPanelOpen: boolean;
   terminalActiveTab: "terminal" | "problems";
+  debugHighlightCounters: boolean;
 }

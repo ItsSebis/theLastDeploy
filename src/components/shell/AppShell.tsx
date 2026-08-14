@@ -3,6 +3,7 @@ import { IncidentOverlay } from "../incident/IncidentOverlay";
 import { ActivityBar } from "./ActivityBar";
 import { CoffeeRail } from "./common/CoffeeRail";
 import { DayTransitionOverlay } from "./common/DayTransitionOverlay";
+import { DevDebugPanel } from "./common/DevDebugPanel";
 import { EditorArea } from "./EditorArea";
 import { Sidebar } from "./Sidebar";
 import { StatusBar } from "./StatusBar";
@@ -21,6 +22,7 @@ export function AppShell() {
       <StatusBar />
       <IncidentOverlay />
       <DayTransitionOverlay />
+      <DevDebugPanel />
     </div>
   );
 }
