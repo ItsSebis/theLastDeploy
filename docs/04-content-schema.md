@@ -1,0 +1,90 @@
+# Content Schema
+
+All game content (events, items, companions, endings) should live in data files,
+not hardcoded in components, so non-engineers on the team can add inside jokes
+without touching game logic. Suggested shapes below — adjust field names to taste
+during implementation, but keep the separation of content from code.
+
+## Item
+
+```json
+{
+  "id": "rubber_duck",
+  "name": "Rubber Duck",
+  "description": "Stares at your code. Says nothing. Somehow helps.",
+  "counters": ["off_by_one_error", "merge_conflict_kraken"],
+  "unlockedBy": "default",
+  "flavorOnUse": "You explain the bug out loud. You immediately see the bug."
+}
+```
+
+## Night Event (Incident)
+
+```json
+{
+  "id": "friday_deploy_curse",
+  "name": "The Friday 5PM Deploy Curse",
+  "description": "Someone deployed on a Friday. At 5:03 PM. On purpose.",
+  "counteredBy": ["hotfix_script"],
+  "onCounteredText": "You roll it back before anyone notices. Mostly.",
+  "onFailText": "You spend the weekend un-breaking production.",
+  "failEffects": { "sanity": -15, "reputation": -5 },
+  "weight": 3,
+  "minSprint": 2
+}
+```
+
+## Companion
+
+```json
+{
+  "id": "senior_dev",
+  "name": "The Senior Dev",
+  "description": "Communicates exclusively through code comments.",
+  "passive": "Reduces Tech Debt gain by 10% while in your party.",
+  "relationshipEvents": ["senior_dev_checkin_1", "senior_dev_checkin_2"],
+  "unlockedBy": "default"
+}
+```
+
+## Ending
+
+```json
+{
+  "id": "clean_refactor",
+  "name": "The Clean Refactor",
+  "tier": "true_ending",
+  "requirements": {
+    "techDebt": { "max": 10 },
+    "reputation": { "min": 70 },
+    "requiredItemsUsed": ["hotfix_script"]
+  },
+  "text": "You shipped it. It's clean. Nobody believes you."
+}
+```
+
+## Run State (what gets saved)
+
+```json
+{
+  "runId": "uuid",
+  "sprintNumber": 4,
+  "difficulty": "mid",
+  "resources": { "coffee": 60, "sanity": 45, "reputation": 30, "runway": 12, "techDebt": 25 },
+  "inventory": ["rubber_duck", "hotfix_script"],
+  "companionId": "senior_dev",
+  "flags": { "seenEvents": ["friday_deploy_curse"], "relationshipLevel": 2 },
+  "seed": 918273
+}
+```
+
+## Notes for implementation
+
+- Use a `weight` field on events for weighted-random selection, plus a
+  `minSprint`/`maxSprint` gate so late-game events don't fire on sprint 1.
+- Keep `requirements` on endings declarative (min/max ranges, required flags/items)
+  so an ending-checker function can evaluate them generically instead of needing
+  bespoke logic per ending.
+- A `seed` on run state makes runs reproducible for debugging and for the
+  shareable post-mortem card (same seed = comparable runs, like Wordle's daily
+  puzzle number).
