@@ -572,3 +572,27 @@
 .resource-meter-label {
   opacity: 0.85;
 }
+
+.scramble-list-entry {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--vsc-border);
+}
+
+.scramble-list-entry-label {
+  font-family: var(--vsc-font-mono);
+  font-size: 12px;
+  color: var(--vsc-fg-bright);
+  margin-bottom: 2px;
+}
+
+.scramble-list-entry-desc {
+  font-size: 11px;
+  color: var(--vsc-fg-muted);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.scramble-list-entry-grab {
+  font-size: 11px;
+  padding: 4px 8px;
+}
