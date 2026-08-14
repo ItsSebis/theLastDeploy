@@ -2,12 +2,12 @@
 .app-shell {
   height: 100vh;
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 48px 240px 1fr;
   grid-template-rows: 1fr auto 22px;
   grid-template-areas:
-    "sidebar editor"
-    "sidebar terminal"
-    "statusbar statusbar";
+    "activitybar sidebar editor"
+    "activitybar sidebar terminal"
+    "statusbar statusbar statusbar";
 }
 
 /* ---- Sidebar ---- */
@@ -79,6 +79,38 @@
 .companion-card-relationship {
   font-size: 11px;
   color: var(--vsc-accent-green);
+}
+
+.activity-bar {
+  grid-area: activitybar;
+  background: var(--vsc-bg-activitybar);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
+  gap: 4px;
+}
+
+.activity-bar-btn {
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  font-size: 18px;
+  color: var(--vsc-fg-muted);
+  border-radius: 0;
+}
+
+.activity-bar-btn:hover:not(:disabled) {
+  color: var(--vsc-fg-bright);
+  background: none;
+  border-color: transparent;
+}
+
+.activity-bar-btn.active {
+  color: var(--vsc-fg-bright);
+  border-left-color: var(--vsc-accent-blue);
 }
 
 /* ---- Editor area ---- */
