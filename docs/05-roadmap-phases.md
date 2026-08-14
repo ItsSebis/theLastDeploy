@@ -45,6 +45,19 @@ the cheapest to iterate on before backend work locks anything in.
 - Difficulty modes (Junior/Mid/Senior) if not already threaded through earlier
   phases.
 
+## Phase 6 — Tutorial / onboarding
+- Once content, balance, and interactions are stable (i.e. after Phase 5), build
+  a guided first-run path for brand-new players.
+- Teach the *systems* (resource HUD, Focus spending, that incidents exist and
+  are resolved from inventory, difficulty modes) without spoiling *content*
+  (never reveal which item counters which incident — that mystery is the game,
+  see 01-game-design.md's "shown, not explained" design).
+- Likely a first-run-only overlay/walkthrough layered on top of the real game
+  screens, not a separate scripted mode — keep it skippable for repeat players.
+- Revisit once the skill-based scramble and per-action interactions (see design
+  doc, TBD) are locked in, since the tutorial needs to teach whatever those
+  final interactions turn out to be.
+
 ## Suggested "definition of done" per phase
 Each phase should end with something playable/demoable, not just code committed.
 If a phase can't be demoed, it's not done.
