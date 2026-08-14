@@ -57,6 +57,20 @@ export const EXPLORER_TREE: ExplorerFolderNode = {
           itemId: "signed_nda",
           fileText: "// Memory zone management.\n// A signed NDA is stapled to a printout of this file. You can't say why.",
         },
+        {
+          type: "file",
+          id: "p_mobj",
+          name: "p_mobj.c",
+          itemId: null,
+          fileText: "// Map object thinking and physics.\n// A sticky note reads 'DO NOT TOUCH — signed, everyone who touched it.' Nothing to grab.",
+        },
+        {
+          type: "file",
+          id: "sounds",
+          name: "sounds.c",
+          itemId: null,
+          fileText: "// Sound effect lookup tables.\n// Every entry is named 'temp_final_v3'. Nothing here but regret.",
+        },
       ],
     },
     {
@@ -74,8 +88,15 @@ export const EXPLORER_TREE: ExplorerFolderNode = {
           type: "file",
           id: "ie6_hacks",
           name: "ie6-hacks.css",
-          itemId: "tabs_vs_spaces_allegiance",
-          fileText: "/* IE6 conditional hacks. */\n/* A faction pin is stuck to the printout. A monument to a browser nobody misses. */",
+          itemId: null,
+          fileText: "/* IE6 conditional hacks. */\n/* A monument to a browser nobody misses. Nothing to grab. */",
+        },
+        {
+          type: "file",
+          id: "webpack_legacy",
+          name: "webpack.config.legacy.js",
+          itemId: null,
+          fileText: "// A build config from a build tool nobody uses now.\n// It still somehow runs. Nothing to grab.",
         },
       ],
     },
@@ -101,8 +122,15 @@ export const EXPLORER_TREE: ExplorerFolderNode = {
           type: "file",
           id: "old_todo",
           name: "old_todo.txt",
-          itemId: "the_one_working_unit_test",
-          fileText: "1. fix the thing\n2. ??? \n// A printout of a passing test run is paperclipped to this file.",
+          itemId: null,
+          fileText: "1. fix the thing\n2. ??? \n// Nothing to grab, just a reminder of a plan that went nowhere.",
+        },
+        {
+          type: "file",
+          id: "eslintrc_ancient",
+          name: ".eslintrc.ancient.json",
+          itemId: null,
+          fileText: "// Lint rules from a stricter era.\n// Every rule is set to 'off'. Nothing to grab.",
         },
       ],
     },
@@ -140,6 +168,12 @@ export const SOURCE_CONTROL_ENTRIES: ScrambleListEntry[] = [
     description: "Whitespace changes and one very passive-aggressive comment. Nothing to grab.",
     itemId: null,
   },
+  {
+    id: "ci_status_check",
+    label: "✓ 1 check passed",
+    description: "The only green checkmark in this repo's history. Nobody knows why it passes. Nobody dares touch it.",
+    itemId: "the_one_working_unit_test",
+  },
 ];
 
 export const EXTENSIONS_ENTRIES: ScrambleListEntry[] = [
@@ -160,5 +194,11 @@ export const EXTENSIONS_ENTRIES: ScrambleListEntry[] = [
     label: "Prettier — Code Formatter",
     description: "Uninstalled two jobs ago. Somehow still running. Nothing to grab.",
     itemId: null,
+  },
+  {
+    id: "eslint_vs_prettier",
+    label: "ESLint vs. Prettier (holy war)",
+    description: "Two formatters fighting over the same file. You picked a side in 2019 and never looked back.",
+    itemId: "tabs_vs_spaces_allegiance",
   },
 ];

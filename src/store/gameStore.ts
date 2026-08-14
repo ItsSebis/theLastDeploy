@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { ResourceKey } from "../content/types";
-import { companionsById, endings, endingsById, events, eventsById, itemsById } from "../content";
+import { companionsById, endings, endingsById, events, eventsById, gigsById, itemsById } from "../content";
 import { evaluateEndings } from "./endingEvaluator";
 import { pickNightEvent } from "./eventSelector";
 import { resolveIncident } from "./incidentResolver";
@@ -96,6 +96,7 @@ interface GameStore extends GameState {
   stopScramble: () => void;
   pickCompanion: (companionId: string) => void;
   performAction: (actionId: string) => void;
+  takeGig: (gigId: string) => void;
   endSprint: () => void;
   respondToIncident: (itemId: string | null) => void;
   dismissIncident: () => void;
@@ -312,6 +313,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
       focusRemaining,
       flags,
       log: [...state.log, makeLogEntry(state.sprintNumber, action.name)],
+    });
+  },
+
+  takeGig: (gigId) => {
+    const state = get();
+    if (state.phase !== "sprint" || state.activeIncident) return;
+
+    const gig = gigsById[gigId];
+    if (!gig || state.focusRemaining < gig.focusCost) return;
+
+    set({
+      resources: applyEffects(state.resources, gig.effects),
+      focusRemaining: state.focusRemaining - gig.focusCost,
+      log: [...state.log, makeLogEntry(state.sprintNumber, `Took a gig: ${gig.name}`)],
     });
   },
 

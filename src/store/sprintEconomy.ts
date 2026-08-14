@@ -15,8 +15,8 @@ export const STARTING_RESOURCES: Record<ResourceKey, number> = {
 export const FOCUS_PER_SPRINT = 3;
 export const FOCUS_PER_SPRINT_COFFEE_ZERO = 1;
 
-export const SCRAMBLE_DURATION_SECONDS = 45;
-export const SCRAMBLE_INVENTORY_CAP = 4;
+export const SCRAMBLE_DURATION_SECONDS = 40;
+export const SCRAMBLE_INVENTORY_CAP = 5;
 
 export const TAKE_OFFER_REPUTATION_THRESHOLD = 50;
 
@@ -64,13 +64,6 @@ export interface SprintAction {
 }
 
 export const SPRINT_ACTIONS: SprintAction[] = [
-  {
-    id: "take_gig",
-    name: "Take a Gig",
-    focusCost: 1,
-    effects: { runway: 10, reputation: 5, coffee: -12, sanity: -8 },
-    description: "Bill some hours. Money in, energy out.",
-  },
   {
     id: "refactor",
     name: "Refactor",

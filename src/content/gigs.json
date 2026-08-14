@@ -1,0 +1,32 @@
+[
+  {
+    "id": "wordpress_plugin_fix",
+    "name": "Fix a WordPress plugin — $200, due yesterday.",
+    "focusCost": 1,
+    "effects": { "runway": 14, "reputation": 4, "coffee": -10, "sanity": -6 }
+  },
+  {
+    "id": "crypto_landing_page",
+    "name": "Landing page for a crypto startup. They want it to \"pop.\"",
+    "focusCost": 1,
+    "effects": { "runway": 20, "reputation": 6, "coffee": -18, "sanity": -12 }
+  },
+  {
+    "id": "jquery_migration",
+    "name": "Migrate a client off jQuery. They swear it'll be quick.",
+    "focusCost": 1,
+    "effects": { "runway": 16, "reputation": 5, "coffee": -14, "sanity": -10 }
+  },
+  {
+    "id": "logo_rebuild",
+    "name": "Rebuild a logo in 4 different shades of blue.",
+    "focusCost": 1,
+    "effects": { "runway": 8, "reputation": 2, "coffee": -6, "sanity": -4 }
+  },
+  {
+    "id": "quick_bug_fix",
+    "name": "\"Just a quick bug fix\" — six hours ago.",
+    "focusCost": 1,
+    "effects": { "runway": 10, "reputation": 3, "coffee": -12, "sanity": -8 }
+  }
+]

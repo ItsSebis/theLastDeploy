@@ -32,6 +32,13 @@ export interface NightEvent {
   maxSprint?: number;
 }
 
+export interface Gig {
+  id: string;
+  name: string;
+  focusCost: number;
+  effects: Partial<Record<ResourceKey, number>>;
+}
+
 export interface Companion {
   id: string;
   name: string;
