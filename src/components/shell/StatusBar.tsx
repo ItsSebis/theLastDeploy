@@ -1,6 +1,23 @@
 import { useGameStore } from "../../store/gameStore";
+import { MoneyMeter } from "./common/MoneyMeter";
 import { ProblemsBadge } from "./common/ProblemsBadge";
-import { ResourceMeter } from "./common/ResourceMeter";
+import { TieredIconMeter } from "./common/TieredIconMeter";
+
+const SANITY_TIERS = [
+  { min: 80, icon: "🧠" },
+  { min: 60, icon: "😐" },
+  { min: 40, icon: "😵‍💫" },
+  { min: 20, icon: "😫" },
+  { min: 0, icon: "💀" },
+];
+
+const REPUTATION_TIERS = [
+  { min: 80, icon: "🌟" },
+  { min: 60, icon: "⭐" },
+  { min: 40, icon: "✨" },
+  { min: 20, icon: "💫" },
+  { min: 0, icon: "🌑" },
+];
 
 export function StatusBar() {
   const resources = useGameStore((s) => s.resources);
@@ -14,10 +31,9 @@ export function StatusBar() {
 
   return (
     <div className="status-bar">
-      <ResourceMeter icon="☕" label="Coffee" value={resources.coffee} />
-      <ResourceMeter icon="🧠" label="Sanity" value={resources.sanity} />
-      <ResourceMeter icon="⭐" label="Reputation" value={resources.reputation} />
-      <ResourceMeter icon="💰" label="Runway" value={resources.runway} />
+      <TieredIconMeter label="Sanity" value={resources.sanity} tiers={SANITY_TIERS} />
+      <TieredIconMeter label="Reputation" value={resources.reputation} tiers={REPUTATION_TIERS} />
+      <MoneyMeter value={resources.runway} />
       {phase === "sprint" && <ProblemsBadge techDebt={resources.techDebt} />}
       {phase === "sprint" && (
         <button

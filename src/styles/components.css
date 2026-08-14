@@ -2,12 +2,12 @@
 .app-shell {
   height: 100vh;
   display: grid;
-  grid-template-columns: 48px 240px 1fr;
+  grid-template-columns: 48px 240px 1fr 32px;
   grid-template-rows: 1fr auto 22px;
   grid-template-areas:
-    "activitybar sidebar editor"
-    "activitybar sidebar terminal"
-    "statusbar statusbar statusbar";
+    "activitybar sidebar editor coffee"
+    "activitybar sidebar terminal coffee"
+    "statusbar statusbar statusbar statusbar";
 }
 
 /* ---- Sidebar ---- */
@@ -438,6 +438,86 @@
 .status-bar-sprint {
   font-family: var(--vsc-font-mono);
   opacity: 0.9;
+}
+
+.tiered-icon-meter {
+  font-size: 16px;
+  line-height: 1;
+  cursor: default;
+}
+
+.money-meter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  padding: 1px 4px;
+  border-radius: 2px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.money-meter-drift {
+  color: var(--vsc-fg-muted);
+  font-size: 11px;
+}
+
+.money-meter-drop {
+  animation: money-meter-pulse 0.6s ease;
+}
+
+@keyframes money-meter-pulse {
+  0% {
+    background-color: var(--vsc-accent-red);
+    color: #fff;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* ---- Coffee rail ---- */
+.coffee-rail {
+  grid-area: coffee;
+  background: var(--vsc-bg-sidebar);
+  border-left: 1px solid var(--vsc-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 8px;
+}
+
+.coffee-rail-icon {
+  font-size: 14px;
+}
+
+.coffee-rail-track {
+  flex: 1;
+  width: 10px;
+  border-radius: 5px;
+  background: var(--vsc-bg-input);
+  border: 1px solid var(--vsc-border);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.coffee-rail-fill {
+  width: 100%;
+  border-radius: 5px;
+  transition: height 0.3s ease;
+}
+
+.coffee-rail-fill.high {
+  background: var(--vsc-accent-green);
+}
+
+.coffee-rail-fill.mid {
+  background: var(--vsc-accent-yellow);
+}
+
+.coffee-rail-fill.low {
+  background: var(--vsc-accent-red);
 }
 
 /* ---- Incident toast ---- */
