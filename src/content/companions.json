@@ -10,7 +10,19 @@
       "// you again. good.",
       "// I'd take a bullet for this repo. not for you though. the repo."
     ],
-    "unlockedBy": "default"
+    "unlockedBy": "default",
+    "dailyCost": 5,
+    "quitConditions": [
+      { "id": "tech_debt_high", "resource": "techDebt", "min": 60, "relationshipMax": 1 }
+    ],
+    "quitFlavorText": "The Senior Dev pushes one last commit -- \"// not my problem anymore\" -- and goes quiet for good.",
+    "support": {
+      "id": "senior_dev_clear_debt",
+      "name": "Emergency Cleanup",
+      "description": "Clears Tech Debt back to zero.",
+      "relationshipMin": 2,
+      "offerChance": 0.2
+    }
   },
   {
     "id": "pm_circling_back",
@@ -23,7 +35,19 @@
       "No agenda, just checking in. (There's an agenda.)",
       "Honestly? You're doing better than the last dev on this project."
     ],
-    "unlockedBy": "default"
+    "unlockedBy": "default",
+    "dailyCost": 4,
+    "quitConditions": [
+      { "id": "reputation_low", "resource": "reputation", "max": 20, "relationshipMax": 1 }
+    ],
+    "quitFlavorText": "The PM stops circling back. Turns out there was never anything to follow up on.",
+    "support": {
+      "id": "pm_pitch",
+      "name": "Pitch to a Big Corp",
+      "description": "Pitches you to a contact. Reputation boost.",
+      "relationshipMin": 2,
+      "offerChance": 0.2
+    }
   },
   {
     "id": "figma_designer",
@@ -36,7 +60,19 @@
       "You get it. Nobody else gets it.",
       "I'm naming a color after you. It's a shade of blue."
     ],
-    "unlockedBy": "default"
+    "unlockedBy": "default",
+    "dailyCost": 3,
+    "quitConditions": [
+      { "id": "reputation_low_unseen", "resource": "reputation", "max": 15, "relationshipMax": 0 }
+    ],
+    "quitFlavorText": "The Designer stops sharing mockups. \"Nobody was ever going to see it anyway.\"",
+    "support": {
+      "id": "designer_portfolio_flex",
+      "name": "Portfolio Flex",
+      "description": "A slick case-study post goes up. Reputation burst.",
+      "relationshipMin": 2,
+      "offerChance": 0.2
+    }
   },
   {
     "id": "the_intern",
@@ -49,7 +85,20 @@
       "you're like a mentor to me. is that ok to say",
       "I pushed to main again. it's fine this time. probably."
     ],
-    "unlockedBy": "default"
+    "unlockedBy": "default",
+    "dailyCost": 1,
+    "quitConditions": [
+      { "id": "thirty_sprints", "sprintsInPartyMin": 30 },
+      { "id": "over_chatting", "relationshipMin": 6 }
+    ],
+    "quitFlavorText": "The internship ends. Or maybe you just wouldn't stop talking to them. Either way, they're gone.",
+    "support": {
+      "id": "intern_uncle_microsoft",
+      "name": "\"My Uncle Works at Microsoft\"",
+      "description": "Extremely rare. A big reputation and runway windfall, out of nowhere.",
+      "relationshipMin": 2,
+      "offerChance": 0.05
+    }
   },
   {
     "id": "qa_ghost",
@@ -62,6 +111,16 @@
       "You're one of the good ones. Don't end up like me.",
       "Something's coming. I can't say what. I never can."
     ],
-    "unlockedBy": "default"
+    "unlockedBy": "default",
+    "dailyCost": 1,
+    "quitConditions": [],
+    "quitFlavorText": "",
+    "support": {
+      "id": "qa_ghost_guard_night",
+      "name": "Guard the Night",
+      "description": "Guards you from incidents fully, for one night.",
+      "relationshipMin": 2,
+      "offerChance": 0.2
+    }
   }
 ]

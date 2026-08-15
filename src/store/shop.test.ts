@@ -59,4 +59,25 @@ describe("applyPurchase", () => {
   it("throws for an unknown item id", () => {
     expect(() => applyPurchase("not_a_real_item")).toThrow();
   });
+
+  it("grants a 7-sprint QA Ghost buff for qa_ghost_warning", () => {
+    expect(applyPurchase("qa_ghost_warning")).toEqual({
+      runwayDelta: -15,
+      focusBonusDelta: 0,
+      qaGhostBuffDelta: 7,
+    });
+  });
+});
+
+describe("canPurchase for qa_ghost_warning", () => {
+  it("is not repeatable", () => {
+    expect(canPurchase("qa_ghost_warning", 100, ["qa_ghost_warning"])).toEqual({
+      allowed: false,
+      reason: "already purchased",
+    });
+  });
+
+  it("allows a first-time purchase with enough runway", () => {
+    expect(canPurchase("qa_ghost_warning", 100, [])).toEqual({ allowed: true });
+  });
 });

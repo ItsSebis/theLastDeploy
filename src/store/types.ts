@@ -29,6 +29,20 @@ export interface GameFlags {
   itemsUsed: string[];
   relationshipLevel: number;
   lastCheckedInSprint: number;
+  companionHiredSprint: number; // sprint the current companionId was picked
+  supportOffered: boolean; // pending, untriggered Support offer from the current companion
+}
+
+// QA Ghost lives outside the single companionId slot (see docs/08's Batch G
+// implementation notes) -- it's bought before it's hired, so it needs to
+// track relationship/state independently of whatever companionId holds.
+export interface QaGhostState {
+  buffActive: boolean;
+  buffSprintsRemaining: number;
+  relationshipLevel: number;
+  hired: boolean;
+  supportOffered: boolean;
+  guardActive: boolean; // pending Support-ability consumption (skips the next incident)
 }
 
 export interface GameState {
@@ -42,6 +56,7 @@ export interface GameState {
   inventory: string[];
   companionId: string | null;
   flags: GameFlags;
+  qaGhost: QaGhostState;
   offerUnlocked: boolean;
   activeIncident: ActiveIncident | null;
   lastEventId: string | null;

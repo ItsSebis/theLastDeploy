@@ -41,6 +41,24 @@ export const INTERN_CHAOS_CHANCE = 0.5;
 export const INTERN_CHAOS_BONUS_RUNWAY = 5;
 export const INTERN_CHAOS_MISHAP_TECH_DEBT = 8;
 
+// Batch G -- companion economy. Placeholders, same as everything else in
+// this file -- needs a real balance pass after playtesting.
+export const RELATIONSHIP_GOOD_THRESHOLD = 2; // gates all Support-offer rolls
+export const RELATIONSHIP_VERY_GOOD_THRESHOLD = 4; // QA Ghost hire eligibility
+
+export const PM_SUPPORT_REPUTATION_BOOST = 15;
+export const DESIGNER_SUPPORT_REPUTATION_BOOST = 12; // deliberately below PM's so the two don't feel interchangeable
+export const INTERN_SUPPORT_REPUTATION_BOOST = 20;
+export const INTERN_SUPPORT_RUNWAY_BOOST = 15;
+
+// The intern skips charging their own daily fee once Runway is already this
+// low or lower -- read post-drift, so a rough sprint waives that same
+// sprint's fee.
+export const INTERN_FEE_WAIVE_RUNWAY_THRESHOLD = 10;
+
+export const QA_GHOST_BUFF_DURATION_SPRINTS = 7;
+export const QA_GHOST_BUFF_COST = 15;
+
 export const RESOURCE_MIN = 0;
 export const RESOURCE_MAX = 100; // only applied to coffee/sanity/reputation; runway & techDebt are floor-only
 

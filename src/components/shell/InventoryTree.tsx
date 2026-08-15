@@ -6,10 +6,11 @@ export function InventoryTree() {
   const activeIncident = useGameStore((s) => s.activeIncident);
   const respondToIncident = useGameStore((s) => s.respondToIncident);
   const debugHighlightCounters = useGameStore((s) => s.debugHighlightCounters);
-  const companionId = useGameStore((s) => s.companionId);
+  const qaGhost = useGameStore((s) => s.qaGhost);
 
   const respondable = !!activeIncident && !activeIncident.resolution;
-  const showHighlight = debugHighlightCounters || companionId === "qa_ghost";
+  const showHighlight =
+    debugHighlightCounters || qaGhost.hired || (qaGhost.buffActive && qaGhost.buffSprintsRemaining > 0);
 
   return (
     <div className="sidebar-section">

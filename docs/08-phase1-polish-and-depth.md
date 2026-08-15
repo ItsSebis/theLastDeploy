@@ -339,3 +339,76 @@ it's last and framed as ongoing work, not a one-shot deliverable.
 - Otherwise as already scoped above — genuinely open-ended, content volume
   work, best done iteratively against playtesting rather than planned
   further up front.
+
+## Batch G — Companion economy: payment, quitting, and Support abilities
+
+New from Sebi's Brain.md's `## Survival` section, the last item left after
+Batches 0–F closed out this doc. Batch E (companion relationship system)
+built the *shared* scaffolding — one free companion pick per run, a generic
+neglect-quit timer, per-companion passives — but left every companion
+mechanically interchangeable beyond that. This batch differentiates them:
+each has a daily Runway cost, its own quit condition beyond generic
+neglect, and an activatable "Support" ability (1 Focus to trigger, offered
+occasionally once relationship is good). QA Ghost gets a materially
+different acquisition model — bought as a temporary warning, then
+optionally earned as a real hire — since it was never meant to fit the
+"pick one companion for the whole run" shape.
+
+- Per-companion daily payment (Runway upkeep), quit condition, and Support
+  ability:
+  - Senior Dev ($5/day) — quits on high Tech Debt + bad relationship;
+    Support clears Tech Debt to zero.
+  - PM ($4/day) — quits on low Reputation + bad relationship; Support
+    pitches you to a big corp for a Reputation boost.
+  - Designer ($3/day) — quits on low Reputation + bad relationship too, but
+    "reputation-vain" rather than PM's flavor (feels unseen, not
+    unpitchable) — distinct thresholds so the two don't fire in lockstep.
+    Support is a portfolio-flex Reputation burst.
+  - Intern ($1/day, waived when Runway is already low) — quits after 30
+    sprints in the party, or from being checked in with too much. Support
+    is a rare ("My Uncle Works at Microsoft") Reputation + Runway windfall.
+  - QA Ghost — never quits. See its own acquisition model below.
+- QA Ghost's acquisition model, distinct from the other four:
+  - Bought from the Runway shop for $15: a 7-day timed buff that grants the
+    "highlight the correct item" passive.
+  - Relationship with QA Ghost accrues passively while the buff is active,
+    and can keep being built afterward via a "Thank QA Ghost" action, even
+    once the buff has lapsed.
+  - Once relationship is "very good," QA Ghost becomes hireable as a real
+    companion for $1/day, with a Support ability that guards a full night
+    from incidents.
+
+### Implementation notes
+
+- **Structural decision**: `GameState.companionId` is a single slot. QA
+  Ghost's lifecycle (bought → relationship accrues while not your chosen
+  companion → optionally hired) doesn't fit into it without either blocking
+  QA Ghost + a picked companion from coexisting, or a multi-slot party
+  refactor touching every `companionId`-keyed check in the codebase. QA
+  Ghost got its own independent state slice (`GameState.qaGhost`) instead —
+  smallest change, and QA Ghost was already special-cased everywhere else
+  (excluded from the picker, bought not picked). Consequence: QA Ghost's
+  upkeep/passive/Support logic lives in a parallel path next to the
+  `companionId`-keyed one, not reusing it outright.
+- Quit conditions are declarative (`Companion.quitConditions`, an array
+  evaluated with OR-across-conditions semantics, each condition itself an
+  AND of its present fields) and evaluated by a new pure module,
+  `src/store/companionQuit.ts` — mirrors `endingEvaluator.ts`'s
+  "generic evaluator over declarative content" spirit.
+- Ordering in `advanceSprint` (`src/store/gameStore.ts`): drift → companion
+  + QA Ghost upkeep deduction → QA Ghost buff countdown/relationship
+  accrual → existing generic neglect-quit check → new per-companion
+  quit-condition check → existing intern-chaos roll → Support-offer rolls
+  (companion + QA Ghost) → forced-fail check → base update → QA Ghost
+  guard-consumption (forces a peaceful night) → existing peaceful-night
+  roll → incident pick. Order matters: the quit-condition check must run
+  after neglect (so a same-sprint neglect-quit is respected first) and
+  before the intern-chaos roll (so a same-sprint quit correctly suppresses
+  it). Known interaction to watch in playtesting: a companion can be
+  neglect-penalized *and* trip their own quit condition in the same sprint,
+  since the quit check reads the same-sprint post-penalty relationship
+  value — treated as intentional "last straw" framing, not a bug.
+- All new relationship/threshold/boost numbers (`RELATIONSHIP_GOOD_THRESHOLD`,
+  `RELATIONSHIP_VERY_GOOD_THRESHOLD`, per-companion quit thresholds, Support
+  boost amounts) are Phase 1 placeholders in `sprintEconomy.ts`, same as
+  everything else there — need a real balance pass after playtesting.

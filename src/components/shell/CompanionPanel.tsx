@@ -4,9 +4,11 @@ import { useGameStore } from "../../store/gameStore";
 export function CompanionPanel() {
   const companionId = useGameStore((s) => s.companionId);
   const relationshipLevel = useGameStore((s) => s.flags.relationshipLevel);
+  const supportOffered = useGameStore((s) => s.flags.supportOffered);
   const focusRemaining = useGameStore((s) => s.focusRemaining);
   const activeIncident = useGameStore((s) => s.activeIncident);
   const performAction = useGameStore((s) => s.performAction);
+  const triggerSupport = useGameStore((s) => s.triggerSupport);
 
   if (!companionId) return null;
   const companion = companionsById[companionId];
@@ -27,6 +29,16 @@ export function CompanionPanel() {
         <div className="companion-card-desc">{companion.description}</div>
         <div className="companion-card-relationship">Relationship: {relationshipLevel}</div>
       </button>
+      {supportOffered && (
+        <button
+          className="companion-card companion-card-clickable companion-support-btn"
+          disabled={disabled}
+          onClick={() => triggerSupport()}
+          title={companion.support.description}
+        >
+          {companion.support.name} (1 Focus)
+        </button>
+      )}
     </div>
   );
 }

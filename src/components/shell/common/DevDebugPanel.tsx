@@ -18,6 +18,7 @@ export function DevDebugPanel() {
   const inventory = useGameStore((s) => s.inventory);
   const companionId = useGameStore((s) => s.companionId);
   const flags = useGameStore((s) => s.flags);
+  const qaGhost = useGameStore((s) => s.qaGhost);
   const offerUnlocked = useGameStore((s) => s.offerUnlocked);
   const activeIncident = useGameStore((s) => s.activeIncident);
   const activityTab = useGameStore((s) => s.activityTab);
@@ -28,6 +29,9 @@ export function DevDebugPanel() {
   const debugSetEnding = useGameStore((s) => s.debugSetEnding);
   const debugSetResource = useGameStore((s) => s.debugSetResource);
   const debugToggleHighlight = useGameStore((s) => s.debugToggleHighlight);
+  const debugSetRelationship = useGameStore((s) => s.debugSetRelationship);
+  const debugSetQaGhostRelationship = useGameStore((s) => s.debugSetQaGhostRelationship);
+  const debugForceSupportOffer = useGameStore((s) => s.debugForceSupportOffer);
 
   if (!import.meta.env.DEV) return null;
 
@@ -69,6 +73,8 @@ export function DevDebugPanel() {
         <div className="dev-debug-row"><span>focus</span><span>{focusRemaining}</span></div>
         <div className="dev-debug-row"><span>companion</span><span>{companionId ?? "—"}</span></div>
         <div className="dev-debug-row"><span>relationship</span><span>{flags.relationshipLevel}</span></div>
+        <div className="dev-debug-row"><span>supportOffered</span><span>{String(flags.supportOffered)}</span></div>
+        <div className="dev-debug-row"><span>qaGhost</span><span>{JSON.stringify(qaGhost)}</span></div>
         <div className="dev-debug-row"><span>offerUnlocked</span><span>{String(offerUnlocked)}</span></div>
         <div className="dev-debug-row"><span>dangerTier</span><span>{dangerTierFromTechDebt(resources.techDebt)}</span></div>
         <div className="dev-debug-row"><span>activityTab</span><span>{activityTab}</span></div>
@@ -120,6 +126,28 @@ export function DevDebugPanel() {
             onChange={debugToggleHighlight}
           />
         </label>
+
+        <label className="dev-debug-row">
+          <span>Companion relationship</span>
+          <input
+            type="number"
+            value={flags.relationshipLevel}
+            onChange={(e) => debugSetRelationship(Number(e.target.value))}
+          />
+        </label>
+
+        <label className="dev-debug-row">
+          <span>QA Ghost relationship</span>
+          <input
+            type="number"
+            value={qaGhost.relationshipLevel}
+            onChange={(e) => debugSetQaGhostRelationship(Number(e.target.value))}
+          />
+        </label>
+
+        <button className="btn dev-debug-btn" onClick={debugForceSupportOffer}>
+          Force Support offer
+        </button>
       </div>
     </div>
   );

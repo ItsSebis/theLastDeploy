@@ -1,4 +1,5 @@
 import { CompanionPanel } from "./CompanionPanel";
+import { QaGhostPanel } from "./QaGhostPanel";
 import { InventoryTree } from "./InventoryTree";
 import { ExplorerPanel } from "../scramble/ExplorerPanel";
 import { SourceControlPanel } from "../scramble/SourceControlPanel";
@@ -25,6 +26,7 @@ export function Sidebar() {
     <div className="sidebar">
       <InventoryTree />
       <CompanionPanel />
+      {phase === "sprint" && <QaGhostPanel />}
       {phase === "sprint" && <ContactsList />}
     </div>
   );

@@ -54,10 +54,43 @@ during implementation, but keep the separation of content from code.
   "name": "The Senior Dev",
   "description": "Communicates exclusively through code comments.",
   "passive": "Reduces Tech Debt gain by 10% while in your party.",
-  "relationshipEvents": ["senior_dev_checkin_1", "senior_dev_checkin_2"],
-  "unlockedBy": "default"
+  "relationshipEvents": [
+    "// noted.",
+    "// this is fine, probably."
+  ],
+  "unlockedBy": "default",
+  "dailyCost": 5,
+  "quitConditions": [
+    { "id": "tech_debt_high", "resource": "techDebt", "min": 60, "relationshipMax": 1 }
+  ],
+  "quitFlavorText": "The Senior Dev pushes one last commit and goes quiet for good.",
+  "support": {
+    "id": "senior_dev_clear_debt",
+    "name": "Emergency Cleanup",
+    "description": "Clears Tech Debt back to zero.",
+    "relationshipMin": 2,
+    "offerChance": 0.2
+  }
 }
 ```
+
+- `relationshipEvents` is a flat list of flavor **strings** (not event-id
+  references) unlocked in order as `relationshipLevel` rises, read by
+  `MessagesPanel.tsx` via `relationshipEvents.slice(0, relationshipLevel)`.
+- `dailyCost` is deducted from Runway each sprint while the companion is in
+  the party (see `advanceSprint` in `gameStore.ts`).
+- `quitConditions` is an array of declarative conditions, each evaluated as
+  an AND of its present fields (`resource`+`min`/`max`, `relationshipMin`/
+  `relationshipMax`, `sprintsInPartyMin`); the companion quits when **any**
+  condition in the array fires (OR across conditions) — see
+  `companionQuit.ts`'s `evaluateCompanionQuit`. An empty array means the
+  companion never quits via this system (e.g. `qa_ghost`).
+- `support` describes a Focus-costing, relationship-gated activatable
+  ability: `relationshipMin` gates whether it can ever be offered,
+  `offerChance` is a per-sprint roll (once gated) for whether it's actually
+  offered that sprint, mirroring `PEACEFUL_NIGHT_CHANCE`'s shape. The
+  concrete effect of triggering it is still companion-id-specific code (see
+  `companionSupport.ts`), consistent with how passives are applied.
 
 ## Ending
 

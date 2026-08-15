@@ -1,4 +1,6 @@
-export type ShopItemKind = "focus_bonus" | "coffee_refill" | "junk";
+import { QA_GHOST_BUFF_COST, QA_GHOST_BUFF_DURATION_SPRINTS } from "./sprintEconomy";
+
+export type ShopItemKind = "focus_bonus" | "coffee_refill" | "junk" | "qa_ghost_buff";
 
 export interface ShopItem {
   id: string;
@@ -50,6 +52,14 @@ export const SHOP_ITEMS: ShopItem[] = [
     kind: "junk",
     repeatable: true,
   },
+  {
+    id: "qa_ghost_warning",
+    name: "Hire a Ghost (7 Days)",
+    description: "The QA Ghost warns you before incidents for a week. No day rate -- yet.",
+    cost: QA_GHOST_BUFF_COST,
+    kind: "qa_ghost_buff",
+    repeatable: false,
+  },
 ];
 
 export interface PurchaseCheck {
@@ -75,6 +85,7 @@ export interface PurchaseEffect {
   runwayDelta: number;
   focusBonusDelta: number;
   coffeeSetTo?: number;
+  qaGhostBuffDelta?: number;
 }
 
 export function applyPurchase(itemId: string): PurchaseEffect {
@@ -84,5 +95,6 @@ export function applyPurchase(itemId: string): PurchaseEffect {
   const base: PurchaseEffect = { runwayDelta: -item.cost, focusBonusDelta: 0 };
   if (item.kind === "focus_bonus") return { ...base, focusBonusDelta: 1 };
   if (item.kind === "coffee_refill") return { ...base, coffeeSetTo: 100 };
+  if (item.kind === "qa_ghost_buff") return { ...base, qaGhostBuffDelta: QA_GHOST_BUFF_DURATION_SPRINTS };
   return base;
 }

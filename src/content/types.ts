@@ -56,6 +56,32 @@ export interface Gig {
   effects: Partial<Record<ResourceKey, number>>;
 }
 
+export interface CompanionQuitCondition {
+  id: string;
+  // A condition fires when ALL present fields below are satisfied (AND).
+  // A companion quits when ANY condition in Companion.quitConditions fires
+  // (OR across conditions) -- unlike Ending.requirements' single AND-block,
+  // one companion can have two unrelated quit reasons (e.g. the intern:
+  // 30 sprints in the party OR relationship gets too chatty).
+  // Intended values are ResourceKey; kept as `string` here so plain JSON
+  // content still satisfies it (same accommodation as EventDanger/EndingTier
+  // above).
+  resource?: string;
+  min?: number; // fires when resource >= min
+  max?: number; // fires when resource <= max
+  relationshipMin?: number;
+  relationshipMax?: number;
+  sprintsInPartyMin?: number;
+}
+
+export interface CompanionSupport {
+  id: string;
+  name: string;
+  description: string;
+  relationshipMin: number; // "good relationship" gate before this can ever be offered
+  offerChance: number; // per-sprint roll once gated, same shape as PEACEFUL_NIGHT_CHANCE
+}
+
 export interface Companion {
   id: string;
   name: string;
@@ -63,6 +89,10 @@ export interface Companion {
   passive: string;
   relationshipEvents: string[];
   unlockedBy: string;
+  dailyCost: number;
+  quitConditions: CompanionQuitCondition[]; // [] = never quits via this system
+  quitFlavorText: string;
+  support: CompanionSupport;
 }
 
 export interface EndingRequirementRange {

@@ -23,13 +23,13 @@ See `07-scramble-and-interaction-redesign.md`: reworked scramble into an
 explorable VS Code-style panel set, bespoke per-action sprint interactions, and
 a Runway shop. Implemented via commits `9d75bfb`..`278fbc1`, `65b58ca`, `e3952cb`.
 
-### Phase 1, part three — polish & depth (in progress)
+### Phase 1, part three — polish & depth (done)
 See `08-phase1-polish-and-depth.md` for the full ordered breakdown, organized
 from `Sebis Brain.md`: a dev debug overlay, UI bug fixes, scramble balance,
-gig-economy honesty, survival pacing, a companion relationship system, and
-ongoing content depth/variety. **Don't start Phase 2, 3, or 6 (save, login,
-tutorial) until at least Batches 0–D there are done** — a nice working game
-beats login, saves, or a tutorial.
+gig-economy honesty, survival pacing, a companion relationship system, content
+depth/variety, and a companion economy layer (per-companion payment, quit
+conditions, and Support abilities, plus QA Ghost's buy-then-hire arc).
+Batches 0 through G are implemented.
 
 ## Phase 2 — Local save/resume
 - IndexedDB persistence of run state (autosave per sprint + manual save/quit).

@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import type { ResourceKey } from "../content/types";
 import { companionsById, endings, endingsById, events, eventsById, gigsById, itemsById } from "../content";
+import { evaluateCompanionQuit } from "./companionQuit";
 import { evaluateEndings } from "./endingEvaluator";
 import { pickNightEvent } from "./eventSelector";
 import { resolveIncident } from "./incidentResolver";
+import { applySupportEffect } from "./companionSupport";
 import { SHOP_ITEMS, applyPurchase, canPurchase } from "./shop";
 import {
   dangerTierFromTechDebt,
@@ -13,6 +15,7 @@ import {
   INTERN_CHAOS_BONUS_RUNWAY,
   INTERN_CHAOS_CHANCE,
   INTERN_CHAOS_MISHAP_TECH_DEBT,
+  INTERN_FEE_WAIVE_RUNWAY_THRESHOLD,
   NEGLECT_QUIT_SPRINTS,
   NEGLECT_SANITY_PENALTY,
   NEGLECT_WARNING_SPRINTS,
@@ -29,6 +32,7 @@ import {
   STARTING_RESOURCES,
   TAKE_OFFER_REPUTATION_THRESHOLD,
   TECH_DEBT_SPRINT_DRIFT,
+  RELATIONSHIP_VERY_GOOD_THRESHOLD,
 } from "./sprintEconomy";
 import type { ActivityTab, GameState, LogEntry } from "./types";
 import { nextRandom, randomSeed } from "../utils/rng";
@@ -81,7 +85,21 @@ function createInitialState(): GameState {
     resources: { ...STARTING_RESOURCES },
     inventory: [],
     companionId: null,
-    flags: { itemsUsed: [], relationshipLevel: 0, lastCheckedInSprint: 0 },
+    flags: {
+      itemsUsed: [],
+      relationshipLevel: 0,
+      lastCheckedInSprint: 0,
+      companionHiredSprint: 0,
+      supportOffered: false,
+    },
+    qaGhost: {
+      buffActive: false,
+      buffSprintsRemaining: 0,
+      relationshipLevel: 0,
+      hired: false,
+      supportOffered: false,
+      guardActive: false,
+    },
     offerUnlocked: false,
     activeIncident: null,
     lastEventId: null,
@@ -105,6 +123,9 @@ interface GameStore extends GameState {
   stopScramble: () => void;
   pickCompanion: (companionId: string) => void;
   performAction: (actionId: string) => void;
+  triggerSupport: () => void;
+  thankQaGhost: () => void;
+  hireQaGhost: () => void;
   takeGig: (gigId: string) => void;
   endSprint: () => void;
   respondToIncident: (itemId: string | null) => void;
@@ -121,6 +142,9 @@ interface GameStore extends GameState {
   debugSetEnding: (endingId: string) => void;
   debugSetResource: (key: ResourceKey, value: number) => void;
   debugToggleHighlight: () => void;
+  debugSetRelationship: (value: number) => void;
+  debugSetQaGhostRelationship: (value: number) => void;
+  debugForceSupportOffer: () => void;
 }
 
 // Ends the current sprint: applies passive resource drift, checks forced-fail
@@ -143,23 +167,72 @@ function advanceSprint(state: GameState): Partial<GameState> {
 
   const nextSprintNumber = state.sprintNumber + 1;
 
-  // Neglect: a companion notices (small penalty) after NEGLECT_WARNING_SPRINTS
-  // sprints with no "Check In", and leaves for good after NEGLECT_QUIT_SPRINTS.
   let resources = driftedResources;
   let flags = state.flags;
   let companionId = state.companionId;
-  let extraLogText: string | null = null;
+  let qaGhost = state.qaGhost;
+  const extraLogTexts: string[] = [];
 
-  if (state.companionId) {
-    const sprintsSinceContact = nextSprintNumber - state.flags.lastCheckedInSprint;
-    const companion = companionsById[state.companionId];
+  // Companion upkeep: daily Runway cost, waived for the intern specifically
+  // when Runway is already low (read post-drift, so a rough sprint waives
+  // that same sprint's fee too). QA Ghost's upkeep is unconditional once hired.
+  if (companionId) {
+    const companion = companionsById[companionId];
+    const waiveIntern =
+      companionId === "the_intern" && resources.runway <= INTERN_FEE_WAIVE_RUNWAY_THRESHOLD;
+    if (!waiveIntern) {
+      resources = applyEffects(resources, { runway: -companion.dailyCost });
+    }
+  }
+  if (qaGhost.hired) {
+    resources = applyEffects(resources, { runway: -companionsById.qa_ghost.dailyCost });
+  }
+
+  // QA Ghost's timed shop-buff countdown. The highlight assist itself is
+  // time-limited, but the rapport it builds persists after it lapses --
+  // relationshipLevel keeps accruing even on the sprint the buff runs out.
+  if (qaGhost.buffActive && qaGhost.buffSprintsRemaining > 0) {
+    const remaining = qaGhost.buffSprintsRemaining - 1;
+    qaGhost = {
+      ...qaGhost,
+      buffSprintsRemaining: remaining,
+      buffActive: remaining > 0,
+      relationshipLevel: qaGhost.relationshipLevel + 1,
+    };
+  }
+
+  // Neglect: a companion notices (small penalty) after NEGLECT_WARNING_SPRINTS
+  // sprints with no "Check In", and leaves for good after NEGLECT_QUIT_SPRINTS.
+  if (companionId) {
+    const sprintsSinceContact = nextSprintNumber - flags.lastCheckedInSprint;
+    const companion = companionsById[companionId];
     if (sprintsSinceContact >= NEGLECT_QUIT_SPRINTS) {
       companionId = null;
-      extraLogText = `${companion?.name ?? "Your companion"} stops responding. They're gone.`;
+      extraLogTexts.push(`${companion?.name ?? "Your companion"} stops responding. They're gone.`);
     } else if (sprintsSinceContact >= NEGLECT_WARNING_SPRINTS) {
       flags = { ...flags, relationshipLevel: Math.max(0, flags.relationshipLevel - 1) };
       resources = applyEffects(resources, { sanity: -NEGLECT_SANITY_PENALTY });
-      extraLogText = `${companion?.name ?? "Your companion"} hasn't heard from you in a while.`;
+      extraLogTexts.push(`${companion?.name ?? "Your companion"} hasn't heard from you in a while.`);
+    }
+  }
+
+  // Per-companion quit conditions, layered on top of the generic neglect
+  // timer above -- runs after neglect so a same-sprint neglect-quit is
+  // respected first, and before the intern-chaos roll so a same-sprint quit
+  // correctly suppresses that roll. Note: a companion can be
+  // neglect-penalized and trip their own quit condition in the same sprint
+  // (reads the same-sprint post-penalty relationship value) -- intentional
+  // "last straw" framing, but worth a specific playtest pass.
+  if (companionId) {
+    const companion = companionsById[companionId];
+    const firedCondition = evaluateCompanionQuit(companion, {
+      resources,
+      relationshipLevel: flags.relationshipLevel,
+      sprintsInParty: nextSprintNumber - flags.companionHiredSprint,
+    });
+    if (firedCondition) {
+      extraLogTexts.push(companion.quitFlavorText);
+      companionId = null;
     }
   }
 
@@ -170,14 +243,41 @@ function advanceSprint(state: GameState): Partial<GameState> {
     rngState = afterInternState;
     if (internRoll < INTERN_CHAOS_CHANCE) {
       resources = applyEffects(resources, { runway: INTERN_CHAOS_BONUS_RUNWAY });
-      extraLogText = "The intern found a client who pays fast.";
+      extraLogTexts.push("The intern found a client who pays fast.");
     } else {
       resources = applyEffects(resources, { techDebt: INTERN_CHAOS_MISHAP_TECH_DEBT });
-      extraLogText = "The intern refactored something. It compiles. Barely.";
+      extraLogTexts.push("The intern refactored something. It compiles. Barely.");
     }
   }
 
-  const extraLogEntries = extraLogText ? [makeLogEntry(state.sprintNumber, extraLogText)] : [];
+  // Support-ability offers: relationship-gated, low-chance rolls, same shape
+  // as the peaceful-night/intern-chaos rolls above. Fixed position in the
+  // rngState chain so replays stay deterministic regardless of which
+  // conditionals above fired.
+  if (companionId && !flags.supportOffered) {
+    const companion = companionsById[companionId];
+    if (flags.relationshipLevel >= companion.support.relationshipMin) {
+      const { value: supportRoll, nextState: afterSupportState } = nextRandom(rngState);
+      rngState = afterSupportState;
+      if (supportRoll < companion.support.offerChance) {
+        flags = { ...flags, supportOffered: true };
+        extraLogTexts.push(`${companion.name} offers to help: ${companion.support.name}.`);
+      }
+    }
+  }
+  if (qaGhost.hired && !qaGhost.supportOffered) {
+    const qaGhostCompanion = companionsById.qa_ghost;
+    if (qaGhost.relationshipLevel >= qaGhostCompanion.support.relationshipMin) {
+      const { value: qaSupportRoll, nextState: afterQaSupportState } = nextRandom(rngState);
+      rngState = afterQaSupportState;
+      if (qaSupportRoll < qaGhostCompanion.support.offerChance) {
+        qaGhost = { ...qaGhost, supportOffered: true };
+        extraLogTexts.push(`${qaGhostCompanion.name} offers to help: ${qaGhostCompanion.support.name}.`);
+      }
+    }
+  }
+
+  const extraLogEntries = extraLogTexts.map((text) => makeLogEntry(state.sprintNumber, text));
 
   const forcedEndingId = checkForcedFail(resources);
   if (forcedEndingId) {
@@ -185,6 +285,7 @@ function advanceSprint(state: GameState): Partial<GameState> {
       resources,
       companionId,
       flags,
+      qaGhost,
       phase: "ending",
       endingId: forcedEndingId,
       activeIncident: null,
@@ -204,10 +305,28 @@ function advanceSprint(state: GameState): Partial<GameState> {
     resources,
     companionId,
     flags,
+    qaGhost,
     sprintNumber: nextSprintNumber,
     focusRemaining: (lowResource ? FOCUS_PER_SPRINT_LOW : FOCUS_PER_SPRINT) + state.focusBonus,
     offerUnlocked: resources.reputation >= TAKE_OFFER_REPUTATION_THRESHOLD,
   };
+
+  // QA Ghost's "Guard the Night" Support ability consumes on the very next
+  // advanceSprint call regardless of what it would have rolled, forcing a
+  // peaceful night -- the literal reading of "guards you fully, for one night".
+  if (qaGhost.guardActive) {
+    return {
+      ...baseUpdate,
+      qaGhost: { ...qaGhost, guardActive: false },
+      rngState,
+      activeIncident: null,
+      log: [
+        ...state.log,
+        ...extraLogEntries,
+        makeLogEntry(nextSprintNumber, "The QA Ghost stands watch. Nothing gets through tonight."),
+      ],
+    };
+  }
 
   const { value: peacefulRoll, nextState: afterPeacefulState } = nextRandom(rngState);
   if (peacefulRoll < PEACEFUL_NIGHT_CHANCE[dangerTier]) {
@@ -323,11 +442,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (effect.coffeeSetTo !== undefined) {
       resources = { ...resources, coffee: clampResource("coffee", effect.coffeeSetTo) };
     }
+    const qaGhost = effect.qaGhostBuffDelta
+      ? {
+          ...state.qaGhost,
+          buffActive: true,
+          buffSprintsRemaining: state.qaGhost.buffSprintsRemaining + effect.qaGhostBuffDelta,
+        }
+      : state.qaGhost;
 
     set({
       resources,
       focusBonus: state.focusBonus + effect.focusBonusDelta,
       shopPurchases: [...state.shopPurchases, itemId],
+      qaGhost,
       log: [...state.log, makeLogEntry(state.sprintNumber, `Bought ${shopItem.name}`)],
     });
   },
@@ -343,7 +470,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       phase: "sprint",
       sprintNumber: 1,
       focusRemaining: FOCUS_PER_SPRINT + state.focusBonus,
-      flags: { ...state.flags, lastCheckedInSprint: 1 },
+      flags: { ...state.flags, lastCheckedInSprint: 1, companionHiredSprint: 1, supportOffered: false },
       log: [
         ...state.log,
         makeLogEntry(1, `${companion.name} joins you. Sprint 1 begins.`),
@@ -381,6 +508,68 @@ export const useGameStore = create<GameStore>((set, get) => ({
       focusRemaining,
       flags,
       log: [...state.log, makeLogEntry(state.sprintNumber, action.name)],
+    });
+  },
+
+  triggerSupport: () => {
+    const state = get();
+    if (state.phase !== "sprint" || state.activeIncident || state.focusRemaining < 1) return;
+
+    if (state.companionId && state.flags.supportOffered) {
+      const companion = companionsById[state.companionId];
+      const result = applySupportEffect(state.companionId);
+      let resources = applyEffects(state.resources, result.effects);
+      if (result.setTechDebtToZero) {
+        resources = { ...resources, techDebt: clampResource("techDebt", 0) };
+      }
+      set({
+        resources,
+        focusRemaining: state.focusRemaining - 1,
+        flags: { ...state.flags, supportOffered: false },
+        log: [...state.log, makeLogEntry(state.sprintNumber, `${companion.name}: ${companion.support.name}`)],
+      });
+      return;
+    }
+
+    if (state.qaGhost.hired && state.qaGhost.supportOffered) {
+      const qaGhostCompanion = companionsById.qa_ghost;
+      set({
+        focusRemaining: state.focusRemaining - 1,
+        qaGhost: { ...state.qaGhost, supportOffered: false, guardActive: true },
+        log: [
+          ...state.log,
+          makeLogEntry(state.sprintNumber, `${qaGhostCompanion.name}: ${qaGhostCompanion.support.name}`),
+        ],
+      });
+    }
+  },
+
+  thankQaGhost: () => {
+    const state = get();
+    if (state.phase !== "sprint" || state.activeIncident) return;
+    if (state.qaGhost.hired || state.focusRemaining < 1) return;
+
+    set({
+      focusRemaining: state.focusRemaining - 1,
+      qaGhost: { ...state.qaGhost, relationshipLevel: state.qaGhost.relationshipLevel + 1 },
+      log: [
+        ...state.log,
+        makeLogEntry(state.sprintNumber, "You thank the QA Ghost. They seem... pleased? Hard to tell."),
+      ],
+    });
+  },
+
+  hireQaGhost: () => {
+    const state = get();
+    if (state.phase !== "sprint" || state.qaGhost.hired) return;
+    if (state.qaGhost.relationshipLevel < RELATIONSHIP_VERY_GOOD_THRESHOLD) return;
+
+    set({
+      qaGhost: { ...state.qaGhost, hired: true },
+      log: [
+        ...state.log,
+        makeLogEntry(state.sprintNumber, "The QA Ghost agrees to stick around. Officially, this time."),
+      ],
     });
   },
 
@@ -498,5 +687,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
   debugToggleHighlight: () => {
     if (!import.meta.env.DEV) return;
     set((state) => ({ debugHighlightCounters: !state.debugHighlightCounters }));
+  },
+
+  debugSetRelationship: (value) => {
+    if (!import.meta.env.DEV) return;
+    set((state) => ({ flags: { ...state.flags, relationshipLevel: value } }));
+  },
+
+  debugSetQaGhostRelationship: (value) => {
+    if (!import.meta.env.DEV) return;
+    set((state) => ({ qaGhost: { ...state.qaGhost, relationshipLevel: value } }));
+  },
+
+  debugForceSupportOffer: () => {
+    if (!import.meta.env.DEV) return;
+    set((state) => ({
+      flags: { ...state.flags, supportOffered: true },
+      qaGhost: { ...state.qaGhost, supportOffered: state.qaGhost.hired ? true : state.qaGhost.supportOffered },
+    }));
   },
 }));
