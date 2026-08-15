@@ -4,39 +4,64 @@
     "name": "The Senior Dev",
     "description": "Communicates exclusively through code comments. You've never heard their voice.",
     "passive": "Reduces Tech Debt drift by 10% while in your party.",
-    "relationshipEvents": [],
+    "relationshipEvents": [
+      "// noted.",
+      "// this is fine, probably.",
+      "// you again. good.",
+      "// I'd take a bullet for this repo. not for you though. the repo."
+    ],
     "unlockedBy": "default"
   },
   {
     "id": "pm_circling_back",
     "name": "The PM",
     "description": "Is always \"just circling back on this.\" You're never sure what \"this\" was.",
-    "passive": "Flavor only for now.",
-    "relationshipEvents": [],
+    "passive": "Shields a little Runway each sprint. Buys you room from somewhere.",
+    "relationshipEvents": [
+      "Just circling back on how you're doing!",
+      "Following up on my follow-up.",
+      "No agenda, just checking in. (There's an agenda.)",
+      "Honestly? You're doing better than the last dev on this project."
+    ],
     "unlockedBy": "default"
   },
   {
     "id": "figma_designer",
     "name": "The Figma-Obsessed Designer",
     "description": "Has strong opinions about four different shades of primary blue.",
-    "passive": "Flavor only for now.",
-    "relationshipEvents": [],
+    "passive": "Boosts Reputation gained from Networking.",
+    "relationshipEvents": [
+      "Quick question — thoughts on this blue vs. that blue?",
+      "I redid the button radius. You'll notice. You won't say anything.",
+      "You get it. Nobody else gets it.",
+      "I'm naming a color after you. It's a shade of blue."
+    ],
     "unlockedBy": "default"
   },
   {
     "id": "the_intern",
     "name": "The Intern",
     "description": "Chaotic. High variance. Once pushed directly to `main` and it was, somehow, fine.",
-    "passive": "Flavor only for now.",
-    "relationshipEvents": [],
+    "passive": "Each sprint, a coin flip: a small windfall, or a small mess.",
+    "relationshipEvents": [
+      "hey!! is this normal",
+      "ok I fixed it. I think. don't check.",
+      "you're like a mentor to me. is that ok to say",
+      "I pushed to main again. it's fine this time. probably."
+    ],
     "unlockedBy": "default"
   },
   {
     "id": "qa_ghost",
     "name": "The QA Ghost",
     "description": "Already left the company. Still shows up to warn you before things go wrong.",
-    "passive": "Flavor only for now.",
-    "relationshipEvents": [],
+    "passive": "Highlights the correct item to use during an incident.",
+    "relationshipEvents": [
+      "You should look at that thing before it looks at you.",
+      "I'm not really here. But I saw something. Be careful.",
+      "You're one of the good ones. Don't end up like me.",
+      "Something's coming. I can't say what. I never can."
+    ],
     "unlockedBy": "default"
   }
 ]

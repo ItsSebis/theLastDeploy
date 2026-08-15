@@ -19,7 +19,7 @@
     "tier": "true_ending",
     "requirements": {
       "techDebt": { "max": 10 },
-      "reputation": { "min": 70 },
+      "reputation": { "min": 80 },
       "requiredItemsUsed": ["hotfix_script"]
     },
     "text": "You shipped it. It's clean. Nobody believes you."

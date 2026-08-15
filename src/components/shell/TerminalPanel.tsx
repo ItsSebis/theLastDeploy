@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useGameStore } from "../../store/gameStore";
+import { MessagesPanel } from "./MessagesPanel";
 import { ProblemsPanel } from "./ProblemsPanel";
 
 export function TerminalPanel() {
@@ -31,6 +32,12 @@ export function TerminalPanel() {
           >
             Problems
           </button>
+          <button
+            className={`terminal-tab ${activeTab === "messages" ? "active" : ""}`}
+            onClick={() => setTerminalTab("messages")}
+          >
+            Messages
+          </button>
         </div>
         <button className="terminal-toggle" onClick={toggleTerminalPanel}>
           {open ? "hide ▾" : "show ▸"}
@@ -45,8 +52,10 @@ export function TerminalPanel() {
                 {entry.text}
               </div>
             ))
-          ) : (
+          ) : activeTab === "problems" ? (
             <ProblemsPanel />
+          ) : (
+            <MessagesPanel />
           )}
         </div>
       )}

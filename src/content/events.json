@@ -18,7 +18,7 @@
     "counteredBy": ["it_works_on_my_machine_badge"],
     "onCounteredText": "You wrap it in a namespace and back away slowly. It goes still.",
     "onFailText": "It spreads to two more files before you can stop it.",
-    "failEffects": { "sanity": -8, "techDebt": 10 },
+    "failEffects": { "sanity": -8, "techDebt": 10, "reputation": -3 },
     "danger": "medium",
     "weight": 3,
     "minSprint": 1
@@ -54,7 +54,7 @@
     "counteredBy": ["stack_overflow_bookmark"],
     "onCounteredText": "You find the exact answer, third reply down, from 2011. It still works.",
     "onFailText": "You lose the whole day to it and ship a workaround instead of a fix.",
-    "failEffects": { "runway": -8, "techDebt": 15 },
+    "failEffects": { "runway": -8, "techDebt": 15, "reputation": -4 },
     "danger": "high",
     "weight": 2,
     "minSprint": 3
@@ -117,7 +117,7 @@
     "counteredBy": ["stack_overflow_bookmark"],
     "onCounteredText": "The exact fix, third reply down, from 2014. You kill the runaway instance with seconds to spare on the billing cycle.",
     "onFailText": "You eat the bill. You will be thinking about this bill for the rest of the month.",
-    "failEffects": { "runway": -15, "sanity": -8 },
+    "failEffects": { "runway": -15, "sanity": -8, "reputation": -4 },
     "danger": "high",
     "weight": 2,
     "minSprint": 3
@@ -141,7 +141,7 @@
     "counteredBy": ["hotfix_script"],
     "onCounteredText": "hotfix_FINAL_v2_ACTUALLY_FINAL.sh patches it in prod before the scan re-runs. You will never speak of this again.",
     "onFailText": "You open a ticket. The ticket opens a meeting. The meeting opens three more tickets.",
-    "failEffects": { "techDebt": 15, "sanity": -8 },
+    "failEffects": { "techDebt": 15, "sanity": -8, "reputation": -5 },
     "danger": "high",
     "weight": 2,
     "minSprint": 2

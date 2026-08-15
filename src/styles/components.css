@@ -446,6 +446,19 @@
   cursor: default;
 }
 
+.tiered-icon-meter-critical {
+  animation: tiered-icon-meter-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tiered-icon-meter-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
 .money-meter {
   display: flex;
   align-items: center;
@@ -757,6 +770,20 @@
 .problems-badge {
   border: none;
   background: none;
+}
+
+.messages-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.message-row {
+  color: var(--vsc-fg-default);
+  font-family: var(--vsc-font-mono);
+  font-size: 12px;
+  padding: 2px 0;
+  line-height: 1.4;
 }
 
 .companion-card-clickable {

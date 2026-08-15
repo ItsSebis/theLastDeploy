@@ -7,12 +7,21 @@ import { resolveIncident } from "./incidentResolver";
 import { SHOP_ITEMS, applyPurchase, canPurchase } from "./shop";
 import {
   dangerTierFromTechDebt,
+  FIGMA_NETWORK_REPUTATION_BONUS,
   FOCUS_PER_SPRINT,
-  FOCUS_PER_SPRINT_COFFEE_ZERO,
+  FOCUS_PER_SPRINT_LOW,
+  INTERN_CHAOS_BONUS_RUNWAY,
+  INTERN_CHAOS_CHANCE,
+  INTERN_CHAOS_MISHAP_TECH_DEBT,
+  NEGLECT_QUIT_SPRINTS,
+  NEGLECT_SANITY_PENALTY,
+  NEGLECT_WARNING_SPRINTS,
   PEACEFUL_NIGHT_CHANCE,
+  PM_RUNWAY_DRIFT_BONUS,
   RESOURCE_MAX,
   RESOURCE_MIN,
   RUNWAY_SPRINT_DRIFT,
+  SANITY_WARNING_THRESHOLD,
   SCRAMBLE_DURATION_SECONDS,
   SCRAMBLE_INVENTORY_CAP,
   SENIOR_DEV_TECH_DEBT_DRIFT_REDUCTION,
@@ -72,7 +81,7 @@ function createInitialState(): GameState {
     resources: { ...STARTING_RESOURCES },
     inventory: [],
     companionId: null,
-    flags: { itemsUsed: [], relationshipLevel: 0 },
+    flags: { itemsUsed: [], relationshipLevel: 0, lastCheckedInSprint: 0 },
     offerUnlocked: false,
     activeIncident: null,
     lastEventId: null,
@@ -104,7 +113,7 @@ interface GameStore extends GameState {
   restart: () => void;
   setActivityTab: (tab: ActivityTab) => void;
   openExplorerFile: (fileId: string) => void;
-  setTerminalTab: (tab: "terminal" | "problems") => void;
+  setTerminalTab: (tab: "terminal" | "problems" | "messages") => void;
   toggleTerminalPanel: () => void;
   purchaseShopItem: (itemId: string) => void;
   debugGiveAllItems: () => void;
@@ -122,39 +131,85 @@ function advanceSprint(state: GameState): Partial<GameState> {
     state.companionId === "senior_dev"
       ? TECH_DEBT_SPRINT_DRIFT * (1 - SENIOR_DEV_TECH_DEBT_DRIFT_REDUCTION)
       : TECH_DEBT_SPRINT_DRIFT;
+  const runwayDrift =
+    state.companionId === "pm_circling_back"
+      ? RUNWAY_SPRINT_DRIFT + PM_RUNWAY_DRIFT_BONUS
+      : RUNWAY_SPRINT_DRIFT;
 
   const driftedResources = applyEffects(state.resources, {
     techDebt: techDebtDrift,
-    runway: RUNWAY_SPRINT_DRIFT,
+    runway: runwayDrift,
   });
 
-  const forcedEndingId = checkForcedFail(driftedResources);
+  const nextSprintNumber = state.sprintNumber + 1;
+
+  // Neglect: a companion notices (small penalty) after NEGLECT_WARNING_SPRINTS
+  // sprints with no "Check In", and leaves for good after NEGLECT_QUIT_SPRINTS.
+  let resources = driftedResources;
+  let flags = state.flags;
+  let companionId = state.companionId;
+  let extraLogText: string | null = null;
+
+  if (state.companionId) {
+    const sprintsSinceContact = nextSprintNumber - state.flags.lastCheckedInSprint;
+    const companion = companionsById[state.companionId];
+    if (sprintsSinceContact >= NEGLECT_QUIT_SPRINTS) {
+      companionId = null;
+      extraLogText = `${companion?.name ?? "Your companion"} stops responding. They're gone.`;
+    } else if (sprintsSinceContact >= NEGLECT_WARNING_SPRINTS) {
+      flags = { ...flags, relationshipLevel: Math.max(0, flags.relationshipLevel - 1) };
+      resources = applyEffects(resources, { sanity: -NEGLECT_SANITY_PENALTY });
+      extraLogText = `${companion?.name ?? "Your companion"} hasn't heard from you in a while.`;
+    }
+  }
+
+  // Intern chaos: one extra roll per sprint while they're in the party.
+  let rngState = state.rngState;
+  if (companionId === "the_intern") {
+    const { value: internRoll, nextState: afterInternState } = nextRandom(rngState);
+    rngState = afterInternState;
+    if (internRoll < INTERN_CHAOS_CHANCE) {
+      resources = applyEffects(resources, { runway: INTERN_CHAOS_BONUS_RUNWAY });
+      extraLogText = "The intern found a client who pays fast.";
+    } else {
+      resources = applyEffects(resources, { techDebt: INTERN_CHAOS_MISHAP_TECH_DEBT });
+      extraLogText = "The intern refactored something. It compiles. Barely.";
+    }
+  }
+
+  const extraLogEntries = extraLogText ? [makeLogEntry(state.sprintNumber, extraLogText)] : [];
+
+  const forcedEndingId = checkForcedFail(resources);
   if (forcedEndingId) {
     return {
-      resources: driftedResources,
+      resources,
+      companionId,
+      flags,
       phase: "ending",
       endingId: forcedEndingId,
       activeIncident: null,
       log: [
         ...state.log,
+        ...extraLogEntries,
         makeLogEntry(state.sprintNumber, "The numbers finally caught up with you."),
       ],
     };
   }
 
-  const nextSprintNumber = state.sprintNumber + 1;
-  const dangerTier = dangerTierFromTechDebt(driftedResources.techDebt);
+  const dangerTier = dangerTierFromTechDebt(resources.techDebt);
+
+  const lowResource = resources.coffee <= 0 || resources.sanity <= SANITY_WARNING_THRESHOLD;
 
   const baseUpdate: Partial<GameState> = {
-    resources: driftedResources,
+    resources,
+    companionId,
+    flags,
     sprintNumber: nextSprintNumber,
-    focusRemaining:
-      (driftedResources.coffee <= 0 ? FOCUS_PER_SPRINT_COFFEE_ZERO : FOCUS_PER_SPRINT) +
-      state.focusBonus,
-    offerUnlocked: driftedResources.reputation >= TAKE_OFFER_REPUTATION_THRESHOLD,
+    focusRemaining: (lowResource ? FOCUS_PER_SPRINT_LOW : FOCUS_PER_SPRINT) + state.focusBonus,
+    offerUnlocked: resources.reputation >= TAKE_OFFER_REPUTATION_THRESHOLD,
   };
 
-  const { value: peacefulRoll, nextState: afterPeacefulState } = nextRandom(state.rngState);
+  const { value: peacefulRoll, nextState: afterPeacefulState } = nextRandom(rngState);
   if (peacefulRoll < PEACEFUL_NIGHT_CHANCE[dangerTier]) {
     return {
       ...baseUpdate,
@@ -162,6 +217,7 @@ function advanceSprint(state: GameState): Partial<GameState> {
       activeIncident: null,
       log: [
         ...state.log,
+        ...extraLogEntries,
         makeLogEntry(nextSprintNumber, "A quiet night. Nothing on fire, for once."),
       ],
     };
@@ -180,7 +236,7 @@ function advanceSprint(state: GameState): Partial<GameState> {
     rngState: nextRngState,
     lastEventId: event.id,
     activeIncident: { event, resolution: null },
-    log: [...state.log, makeLogEntry(nextSprintNumber, `Incident: ${event.name}`)],
+    log: [...state.log, ...extraLogEntries, makeLogEntry(nextSprintNumber, `Incident: ${event.name}`)],
   };
 }
 
@@ -287,6 +343,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       phase: "sprint",
       sprintNumber: 1,
       focusRemaining: FOCUS_PER_SPRINT + state.focusBonus,
+      flags: { ...state.flags, lastCheckedInSprint: 1 },
       log: [
         ...state.log,
         makeLogEntry(1, `${companion.name} joins you. Sprint 1 begins.`),
@@ -301,11 +358,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const action = SPRINT_ACTIONS.find((a) => a.id === actionId);
     if (!action || state.focusRemaining < action.focusCost) return;
 
-    const resources = applyEffects(state.resources, action.effects);
+    const bonusEffects =
+      actionId === "network" && state.companionId === "figma_designer"
+        ? { reputation: FIGMA_NETWORK_REPUTATION_BONUS }
+        : {};
+    const resources = applyEffects(
+      applyEffects(state.resources, action.effects),
+      bonusEffects,
+    );
     const focusRemaining = state.focusRemaining - action.focusCost;
     const flags =
       actionId === "check_in"
-        ? { ...state.flags, relationshipLevel: state.flags.relationshipLevel + 1 }
+        ? {
+            ...state.flags,
+            relationshipLevel: state.flags.relationshipLevel + 1,
+            lastCheckedInSprint: state.sprintNumber,
+          }
         : state.flags;
 
     set({

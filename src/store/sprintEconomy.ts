@@ -13,16 +13,33 @@ export const STARTING_RESOURCES: Record<ResourceKey, number> = {
 };
 
 export const FOCUS_PER_SPRINT = 3;
-export const FOCUS_PER_SPRINT_COFFEE_ZERO = 1;
+export const FOCUS_PER_SPRINT_LOW = 1;
+
+// Matches the Sanity status-bar meter's own lowest non-zero tier
+// (StatusBar.tsx's SANITY_TIERS) so the mechanical penalty kicks in exactly
+// when the UI already tells the player things are bad.
+export const SANITY_WARNING_THRESHOLD = 20;
 
 export const SCRAMBLE_DURATION_SECONDS = 40;
 export const SCRAMBLE_INVENTORY_CAP = 5;
 
-export const TAKE_OFFER_REPUTATION_THRESHOLD = 50;
+export const TAKE_OFFER_REPUTATION_THRESHOLD = 60;
 
 export const TECH_DEBT_SPRINT_DRIFT = 5;
 export const RUNWAY_SPRINT_DRIFT = -5;
 export const SENIOR_DEV_TECH_DEBT_DRIFT_REDUCTION = 0.1;
+
+// Sprints since the last "Check In" action before the companion notices
+// (a small penalty) and before they leave for good.
+export const NEGLECT_WARNING_SPRINTS = 3;
+export const NEGLECT_QUIT_SPRINTS = 6;
+export const NEGLECT_SANITY_PENALTY = 3;
+
+export const PM_RUNWAY_DRIFT_BONUS = 2;
+export const FIGMA_NETWORK_REPUTATION_BONUS = 2;
+export const INTERN_CHAOS_CHANCE = 0.5;
+export const INTERN_CHAOS_BONUS_RUNWAY = 5;
+export const INTERN_CHAOS_MISHAP_TECH_DEBT = 8;
 
 export const RESOURCE_MIN = 0;
 export const RESOURCE_MAX = 100; // only applied to coffee/sanity/reputation; runway & techDebt are floor-only

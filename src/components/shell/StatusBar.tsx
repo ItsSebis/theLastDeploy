@@ -1,4 +1,5 @@
 import { useGameStore } from "../../store/gameStore";
+import { SANITY_WARNING_THRESHOLD } from "../../store/sprintEconomy";
 import { MoneyMeter } from "./common/MoneyMeter";
 import { ProblemsBadge } from "./common/ProblemsBadge";
 import { TieredIconMeter } from "./common/TieredIconMeter";
@@ -33,7 +34,12 @@ export function StatusBar() {
 
   return (
     <div className="status-bar">
-      <TieredIconMeter label="Sanity" value={resources.sanity} tiers={SANITY_TIERS} />
+      <TieredIconMeter
+        label="Sanity"
+        value={resources.sanity}
+        tiers={SANITY_TIERS}
+        criticalMin={SANITY_WARNING_THRESHOLD}
+      />
       <TieredIconMeter label="Reputation" value={resources.reputation} tiers={REPUTATION_TIERS} />
       <MoneyMeter value={resources.runway} />
       {phase === "sprint" && <ProblemsBadge techDebt={resources.techDebt} />}

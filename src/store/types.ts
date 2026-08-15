@@ -28,6 +28,7 @@ export interface ScrambleState {
 export interface GameFlags {
   itemsUsed: string[];
   relationshipLevel: number;
+  lastCheckedInSprint: number;
 }
 
 export interface GameState {
@@ -52,6 +53,6 @@ export interface GameState {
   focusBonus: number;
   shopPurchases: string[];
   terminalPanelOpen: boolean;
-  terminalActiveTab: "terminal" | "problems";
+  terminalActiveTab: "terminal" | "problems" | "messages";
   debugHighlightCounters: boolean;
 }
