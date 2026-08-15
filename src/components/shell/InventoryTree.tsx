@@ -25,7 +25,7 @@ export function InventoryTree() {
           const highlighted =
             respondable &&
             showHighlight &&
-            activeIncident!.event.counteredBy.includes(itemId);
+            activeIncident!.event.itemOutcomes[itemId]?.tier === "perfect";
 
           if (respondable) {
             return (

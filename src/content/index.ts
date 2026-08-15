@@ -6,7 +6,7 @@ import gigsData from "./gigs.json";
 import type { Companion, Ending, Gig, Item, NightEvent } from "./types";
 
 export const items = itemsData satisfies Item[];
-export const events = eventsData satisfies NightEvent[];
+export const events = eventsData as NightEvent[];
 export const companions = companionsData satisfies Companion[];
 export const endings = endingsData satisfies Ending[];
 export const gigs = gigsData satisfies Gig[];

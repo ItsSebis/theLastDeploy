@@ -4,7 +4,6 @@ export interface Item {
   id: string;
   name: string;
   description: string;
-  counters: string[];
   // "default" for Phase 1 seed content; wider union of unlock ids added in Phase 4 (meta-progression).
   unlockedBy: string;
   flavorOnUse: string;
@@ -15,15 +14,33 @@ export interface Item {
 // satisfies it (same accommodation as EndingTier/Ending.tier below).
 export type EventDanger = "low" | "medium" | "high";
 
+// Documents the intended values of ItemOutcome.tier below; kept as `string`
+// on the interface itself for the same reason as EventDanger above.
+export type ItemOutcomeTier = "perfect" | "neutral" | "bad";
+
+export interface ItemOutcome {
+  tier: string;
+  text: string;
+  effects: Partial<Record<ResourceKey, number>>;
+  // Removes the item from inventory after this outcome fires. Only ever
+  // authored on "perfect" outcomes -- fumbling a neutral/bad match
+  // shouldn't cost the player the item.
+  consumed?: boolean;
+}
+
 export interface NightEvent {
   id: string;
   name: string;
   description: string;
-  counteredBy: string[];
-  onCounteredText: string;
-  onFailText: string;
+  // Keyed by itemId. Items with no entry here fall through to failText/failEffects.
+  itemOutcomes: Record<string, ItemOutcome>;
+  failText: string;
   failEffects: Partial<Record<ResourceKey, number>>;
-  successEffects?: Partial<Record<ResourceKey, number>>;
+  ignoreText: string;
+  ignoreEffects: Partial<Record<ResourceKey, number>>;
+  // Rare: ignoring is the *correct* response -- reacting is what creates the
+  // problem. When true, ignoreEffects should read as a relief, not a punishment.
+  ignoreIsCorrect?: boolean;
   // Soft-biases weighted event selection toward the run's current danger
   // tier (see sprintEconomy.ts); optional, absent on content that predates it.
   danger?: string;

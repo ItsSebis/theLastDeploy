@@ -5,6 +5,7 @@ export interface IncidentOutcome {
   text: string;
   effects: Partial<Record<ResourceKey, number>>;
   multiplier: number;
+  consumed: boolean;
 }
 
 export function resolveIncident(
@@ -12,21 +13,36 @@ export function resolveIncident(
   itemId: string | null,
   techDebt: number,
 ): IncidentOutcome {
-  const success = itemId !== null && event.counteredBy.includes(itemId);
+  const failMultiplier = 1 + techDebt / 100;
 
-  if (success) {
+  if (itemId === null) {
+    const success = event.ignoreIsCorrect === true;
     return {
-      success: true,
-      text: event.onCounteredText,
-      effects: event.successEffects ?? {},
-      multiplier: 1,
+      success,
+      text: event.ignoreText,
+      effects: event.ignoreEffects,
+      multiplier: success ? 1 : failMultiplier,
+      consumed: false,
     };
   }
 
+  const outcome = event.itemOutcomes[itemId];
+  if (!outcome) {
+    return {
+      success: false,
+      text: event.failText,
+      effects: event.failEffects,
+      multiplier: failMultiplier,
+      consumed: false,
+    };
+  }
+
+  const success = outcome.tier === "perfect";
   return {
-    success: false,
-    text: event.onFailText,
-    effects: event.failEffects,
-    multiplier: 1 + techDebt / 100,
+    success,
+    text: outcome.text,
+    effects: outcome.effects,
+    multiplier: success ? 1 : failMultiplier,
+    consumed: !!outcome.consumed,
   };
 }

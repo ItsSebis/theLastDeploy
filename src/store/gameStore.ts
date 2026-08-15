@@ -417,10 +417,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
       outcome.success && itemId && !state.flags.itemsUsed.includes(itemId)
         ? { ...state.flags, itemsUsed: [...state.flags.itemsUsed, itemId] }
         : state.flags;
+    const inventory =
+      outcome.consumed && itemId
+        ? state.inventory.filter((id) => id !== itemId)
+        : state.inventory;
 
     set({
       resources,
       flags,
+      inventory,
       activeIncident: { event, resolution: { success: outcome.success, text: outcome.text } },
       log: [...state.log, makeLogEntry(state.sprintNumber, outcome.text)],
     });

@@ -165,8 +165,8 @@ export const SOURCE_CONTROL_ENTRIES: ScrambleListEntry[] = [
   {
     id: "uncommitted_diff",
     label: "12 uncommitted changes",
-    description: "Whitespace changes and one very passive-aggressive comment. Nothing to grab.",
-    itemId: null,
+    description: "Whitespace changes, one very passive-aggressive comment, and a stray bug_repro_final.mov staged by accident.",
+    itemId: "screen_recording_of_the_bug",
   },
   {
     id: "ci_status_check",

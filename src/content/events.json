@@ -3,10 +3,22 @@
     "id": "merge_conflict_kraken",
     "name": "Merge Conflict Kraken",
     "description": "Something ancient surfaces in `feature/checkout`. It has many arms and all of them are `<<<<<<< HEAD`.",
-    "counteredBy": ["rubber_duck"],
-    "onCounteredText": "You talk through every conflicting line, one by one. The Kraken sinks back into `main`, sated.",
-    "onFailText": "You resolve it by picking whichever side looks longer. Production disagrees with your choice.",
+    "itemOutcomes": {
+      "rubber_duck": {
+        "tier": "perfect",
+        "text": "You talk through every conflicting line, one by one. The Kraken sinks back into `main`, sated.",
+        "effects": {}
+      },
+      "stack_overflow_bookmark": {
+        "tier": "neutral",
+        "text": "You search for the exact error out of habit. Nothing useful comes up, but scrolling helps a little.",
+        "effects": { "sanity": -3 }
+      }
+    },
+    "failText": "You resolve it by picking whichever side looks longer. Production disagrees with your choice.",
     "failEffects": { "sanity": -10, "reputation": -5 },
+    "ignoreText": "You leave the conflict for tomorrow-you. Tomorrow-you is furious.",
+    "ignoreEffects": { "sanity": -13, "reputation": -7 },
     "danger": "medium",
     "weight": 4,
     "minSprint": 1
@@ -15,10 +27,22 @@
     "id": "legacy_jquery_reawakens",
     "name": "Legacy jQuery Reawakens",
     "description": "A `$` appears in a file that shouldn't have one. Then another. The console fills with familiar, ancient warnings.",
-    "counteredBy": ["it_works_on_my_machine_badge"],
-    "onCounteredText": "You wrap it in a namespace and back away slowly. It goes still.",
-    "onFailText": "It spreads to two more files before you can stop it.",
+    "itemOutcomes": {
+      "it_works_on_my_machine_badge": {
+        "tier": "perfect",
+        "text": "You wrap it in a namespace and back away slowly. It goes still.",
+        "effects": {}
+      },
+      "hotfix_script": {
+        "tier": "neutral",
+        "text": "You patch around it instead of removing it. It goes quiet. For now.",
+        "effects": { "techDebt": 12 }
+      }
+    },
+    "failText": "It spreads to two more files before you can stop it.",
     "failEffects": { "sanity": -8, "techDebt": 10, "reputation": -3 },
+    "ignoreText": "You close the tab. The `$` spreads through three more files by morning.",
+    "ignoreEffects": { "sanity": -10, "techDebt": 14, "reputation": -5 },
     "danger": "medium",
     "weight": 3,
     "minSprint": 1
@@ -27,10 +51,17 @@
     "id": "two_fa_lockout",
     "name": "2FA Lockout",
     "description": "Your phone is at 2%. The code expires in 30 seconds. It is, of course, the worst possible moment.",
-    "counteredBy": ["laptop_charger"],
-    "onCounteredText": "You plug in with seconds to spare and get the code through just in time.",
-    "onFailText": "You're locked out for the rest of the sprint, refreshing a support ticket queue.",
+    "itemOutcomes": {
+      "laptop_charger": {
+        "tier": "perfect",
+        "text": "You plug in with seconds to spare and get the code through just in time.",
+        "effects": {}
+      }
+    },
+    "failText": "You're locked out for the rest of the sprint, refreshing a support ticket queue.",
     "failEffects": { "runway": -5, "sanity": -5 },
+    "ignoreText": "You give up on the login entirely and let the ticket queue eat the rest of the sprint.",
+    "ignoreEffects": { "runway": -8, "sanity": -7 },
     "danger": "medium",
     "weight": 3,
     "minSprint": 1
@@ -39,10 +70,22 @@
     "id": "friday_deploy_curse",
     "name": "The Friday 5PM Deploy Curse",
     "description": "Someone deployed on a Friday. At 5:03 PM. On purpose.",
-    "counteredBy": ["hotfix_script"],
-    "onCounteredText": "You roll it back before anyone notices. Mostly.",
-    "onFailText": "You spend the weekend un-breaking production.",
+    "itemOutcomes": {
+      "hotfix_script": {
+        "tier": "perfect",
+        "text": "You roll it back before anyone notices. Mostly.",
+        "effects": {}
+      },
+      "git_stash": {
+        "tier": "neutral",
+        "text": "You stash your way out of the deploy queue and let Monday-you sort it out.",
+        "effects": { "sanity": -8, "reputation": -3, "techDebt": 8 }
+      }
+    },
+    "failText": "You spend the weekend un-breaking production.",
     "failEffects": { "sanity": -15, "reputation": -5 },
+    "ignoreText": "You mute the channel and go to bed. Production does not mute itself.",
+    "ignoreEffects": { "sanity": -19, "reputation": -8 },
     "danger": "high",
     "weight": 3,
     "minSprint": 2
@@ -51,10 +94,22 @@
     "id": "off_by_one_error",
     "name": "Off-By-One Error Eats a Day",
     "description": "The loop runs one too many times. Or one too few. It has already been six hours.",
-    "counteredBy": ["stack_overflow_bookmark"],
-    "onCounteredText": "You find the exact answer, third reply down, from 2011. It still works.",
-    "onFailText": "You lose the whole day to it and ship a workaround instead of a fix.",
+    "itemOutcomes": {
+      "stack_overflow_bookmark": {
+        "tier": "perfect",
+        "text": "You find the exact answer, third reply down, from 2011. It still works.",
+        "effects": {}
+      },
+      "the_one_working_unit_test": {
+        "tier": "neutral",
+        "text": "The test catches the symptom, not the cause. It ships, mostly working.",
+        "effects": { "runway": -4, "techDebt": 15, "reputation": -2 }
+      }
+    },
+    "failText": "You lose the whole day to it and ship a workaround instead of a fix.",
     "failEffects": { "runway": -8, "techDebt": 15, "reputation": -4 },
+    "ignoreText": "You let it run one too many times and call it a feature.",
+    "ignoreEffects": { "runway": -11, "techDebt": 18, "reputation": -6 },
     "danger": "high",
     "weight": 2,
     "minSprint": 3
@@ -63,11 +118,18 @@
     "id": "force_pushed_to_main",
     "name": "Force-Pushed to Main",
     "description": "Someone force-pushed to `main`. The last few days of commits are... gone? Maybe? Nobody's sure.",
-    "counteredBy": ["git_stash"],
-    "onCounteredText": "You had a stash from two days ago. Crisis averted. The team buys you coffee.",
-    "onFailText": "Three days of history, gone. You start rewriting from memory.",
+    "itemOutcomes": {
+      "git_stash": {
+        "tier": "perfect",
+        "text": "You had a stash from two days ago. Crisis averted. The team buys you coffee.",
+        "effects": { "reputation": 5 },
+        "consumed": true
+      }
+    },
+    "failText": "Three days of history, gone. You start rewriting from memory.",
     "failEffects": { "sanity": -20, "techDebt": 20, "reputation": -10 },
-    "successEffects": { "reputation": 5 },
+    "ignoreText": "You don't even try to recover it. The history stays gone. So does some trust.",
+    "ignoreEffects": { "sanity": -24, "techDebt": 25, "reputation": -14 },
     "danger": "high",
     "weight": 1,
     "minSprint": 2
@@ -76,10 +138,22 @@
     "id": "scope_creep_gremlin",
     "name": "Scope Creep Gremlin",
     "description": "It started as \"just one small tweak.\" There are now fourteen tweaks. The gremlin is feeding.",
-    "counteredBy": ["signed_nda"],
-    "onCounteredText": "You point to the signed scope in the contract. The gremlin hisses and shrinks back to size.",
-    "onFailText": "You say yes to \"just one more thing\" for the fifth time this week.",
+    "itemOutcomes": {
+      "signed_nda": {
+        "tier": "perfect",
+        "text": "You point to the signed scope in the contract. The gremlin hisses and shrinks back to size.",
+        "effects": {}
+      },
+      "readme_nobody_wrote": {
+        "tier": "neutral",
+        "text": "You point at outdated docs that vaguely imply a boundary. It buys you a day.",
+        "effects": { "sanity": -5, "runway": -3 }
+      }
+    },
+    "failText": "You say yes to \"just one more thing\" for the fifth time this week.",
     "failEffects": { "sanity": -10, "runway": -5 },
+    "ignoreText": "You say yes to everything. The gremlin doubles in size.",
+    "ignoreEffects": { "sanity": -13, "runway": -8 },
     "danger": "medium",
     "weight": 3,
     "minSprint": 2
@@ -88,11 +162,18 @@
     "id": "circling_back_ghost",
     "name": "\"Just Circling Back on This\"",
     "description": "A Slack thread from three weeks ago rises from the dead. It has three new participants and no new information.",
-    "counteredBy": ["readme_nobody_wrote"],
-    "onCounteredText": "You link the README nobody wrote. Technically, this is an answer. The thread goes quiet.",
-    "onFailText": "You reply \"looping in @here\" and immediately regret it.",
+    "itemOutcomes": {
+      "readme_nobody_wrote": {
+        "tier": "perfect",
+        "text": "You link the README nobody wrote. Technically, this is an answer. The thread goes quiet.",
+        "effects": { "sanity": 2 },
+        "consumed": true
+      }
+    },
+    "failText": "You reply \"looping in @here\" and immediately regret it.",
     "failEffects": { "sanity": -6 },
-    "successEffects": { "sanity": 2 },
+    "ignoreText": "You leave it on read. It comes back with four more participants next week.",
+    "ignoreEffects": { "sanity": -9 },
     "danger": "low",
     "weight": 4,
     "minSprint": 1
@@ -101,11 +182,17 @@
     "id": "standup_that_would_not_end",
     "name": "Standup That Would Not End",
     "description": "It is 47 minutes long. Someone is sharing their screen. Nobody knows why.",
-    "counteredBy": ["tabs_vs_spaces_allegiance"],
-    "onCounteredText": "You reignite the tabs-vs-spaces debate. The meeting collapses in on itself and everyone leaves.",
-    "onFailText": "You get your 90 seconds of update time back. Eventually.",
+    "itemOutcomes": {
+      "tabs_vs_spaces_allegiance": {
+        "tier": "perfect",
+        "text": "You reignite the tabs-vs-spaces debate. The meeting collapses in on itself and everyone leaves.",
+        "effects": { "sanity": 3 }
+      }
+    },
+    "failText": "You get your 90 seconds of update time back. Eventually.",
     "failEffects": { "sanity": -8, "coffee": -5 },
-    "successEffects": { "sanity": 3 },
+    "ignoreText": "You mute your mic and stare at the ceiling for the full 47 minutes.",
+    "ignoreEffects": { "sanity": -11, "coffee": -6 },
     "danger": "low",
     "weight": 4,
     "minSprint": 1
@@ -114,10 +201,22 @@
     "id": "aws_bill_spike",
     "name": "The AWS Bill 10x'd Overnight",
     "description": "A dashboard nobody checks just turned very, very red. Someone left a loop running. It has been running for nine days.",
-    "counteredBy": ["stack_overflow_bookmark"],
-    "onCounteredText": "The exact fix, third reply down, from 2014. You kill the runaway instance with seconds to spare on the billing cycle.",
-    "onFailText": "You eat the bill. You will be thinking about this bill for the rest of the month.",
+    "itemOutcomes": {
+      "stack_overflow_bookmark": {
+        "tier": "perfect",
+        "text": "The exact fix, third reply down, from 2014. You kill the runaway instance with seconds to spare on the billing cycle.",
+        "effects": {}
+      },
+      "hotfix_script": {
+        "tier": "neutral",
+        "text": "You kill the runaway process by hand, crudely. It works. You never find out why it was running.",
+        "effects": { "runway": -8, "techDebt": 6 }
+      }
+    },
+    "failText": "You eat the bill. You will be thinking about this bill for the rest of the month.",
     "failEffects": { "runway": -15, "sanity": -8, "reputation": -4 },
+    "ignoreText": "You let the billing cycle close on its own. It closes very, very red.",
+    "ignoreEffects": { "runway": -19, "sanity": -10, "reputation": -6 },
     "danger": "high",
     "weight": 2,
     "minSprint": 3
@@ -126,10 +225,17 @@
     "id": "intern_pushed_to_main",
     "name": "The Intern Pushed Directly to Main",
     "description": "There was no branch. There was no PR. There was, briefly, no CI pipeline either.",
-    "counteredBy": ["the_one_working_unit_test"],
-    "onCounteredText": "The one working unit test catches it before it ships. Nobody knows why that test still works. You thank it silently.",
-    "onFailText": "It ships. You spend the afternoon writing a very calm Slack message.",
+    "itemOutcomes": {
+      "the_one_working_unit_test": {
+        "tier": "perfect",
+        "text": "The one working unit test catches it before it ships. Nobody knows why that test still works. You thank it silently.",
+        "effects": {}
+      }
+    },
+    "failText": "It ships. You spend the afternoon writing a very calm Slack message.",
     "failEffects": { "techDebt": 12, "reputation": -5 },
+    "ignoreText": "You let it sit in prod. Someone else finds it first.",
+    "ignoreEffects": { "techDebt": 16, "reputation": -8 },
     "danger": "medium",
     "weight": 3,
     "minSprint": 2
@@ -138,10 +244,17 @@
     "id": "cve_alert",
     "name": "Critical CVE Alert",
     "description": "A dependency four levels deep in node_modules has a critical vulnerability. It was published nine minutes ago. Security is already asking questions.",
-    "counteredBy": ["hotfix_script"],
-    "onCounteredText": "hotfix_FINAL_v2_ACTUALLY_FINAL.sh patches it in prod before the scan re-runs. You will never speak of this again.",
-    "onFailText": "You open a ticket. The ticket opens a meeting. The meeting opens three more tickets.",
+    "itemOutcomes": {
+      "hotfix_script": {
+        "tier": "perfect",
+        "text": "hotfix_FINAL_v2_ACTUALLY_FINAL.sh patches it in prod before the scan re-runs. You will never speak of this again.",
+        "effects": {}
+      }
+    },
+    "failText": "You open a ticket. The ticket opens a meeting. The meeting opens three more tickets.",
     "failEffects": { "techDebt": 15, "sanity": -8, "reputation": -5 },
+    "ignoreText": "You leave the ticket open. Security opens a meeting anyway. The meeting opens three more tickets.",
+    "ignoreEffects": { "techDebt": 19, "sanity": -10, "reputation": -7 },
     "danger": "high",
     "weight": 2,
     "minSprint": 2
@@ -150,13 +263,153 @@
     "id": "cookie_consent_banner",
     "name": "Cookie Consent Banner Blocks the Demo",
     "description": "The banner will not go away. The client can see it. It is, somehow, the only thing anyone comments on.",
-    "counteredBy": ["it_works_on_my_machine_badge"],
-    "onCounteredText": "You wave the badge, blame the client's ad blocker, and move the demo along.",
-    "onFailText": "You spend ten minutes of the demo explaining GDPR.",
+    "itemOutcomes": {
+      "it_works_on_my_machine_badge": {
+        "tier": "perfect",
+        "text": "You wave the badge, blame the client's ad blocker, and move the demo along.",
+        "effects": { "reputation": 2 }
+      }
+    },
+    "failText": "You spend ten minutes of the demo explaining GDPR.",
     "failEffects": { "reputation": -6, "sanity": -3 },
-    "successEffects": { "reputation": 2 },
+    "ignoreText": "You let the client keep clicking around it for the rest of the demo.",
+    "ignoreEffects": { "reputation": -9, "sanity": -4 },
     "danger": "low",
     "weight": 3,
     "minSprint": 1
+  },
+  {
+    "id": "cannot_reproduce_the_bug",
+    "name": "Cannot Reproduce the Bug",
+    "description": "It happened once, in front of a client, and never again. The logs are clean. The client is not convinced it was ever fixed.",
+    "itemOutcomes": {
+      "screen_recording_of_the_bug": {
+        "tier": "perfect",
+        "text": "You scrub to minute 43. There it is, in full, uncut. You finally know what you're looking for.",
+        "effects": {}
+      },
+      "rubber_duck": {
+        "tier": "neutral",
+        "text": "You explain it out loud, twice. You don't find it, but you sound very confident when you close the ticket.",
+        "effects": { "sanity": -3, "reputation": -2 }
+      },
+      "tabs_vs_spaces_allegiance": {
+        "tier": "bad",
+        "text": "You insist, with real conviction, that it's a formatting issue. It is not. Nobody believes you again for a while.",
+        "effects": { "reputation": -9, "sanity": -4 }
+      }
+    },
+    "failText": "You can't reproduce it. You close the ticket with \"works as intended\" and hope.",
+    "failEffects": { "reputation": -5, "sanity": -4 },
+    "ignoreText": "You let the ticket rot at the bottom of the backlog. It resurfaces during the next demo.",
+    "ignoreEffects": { "reputation": -8, "sanity": -5 },
+    "danger": "medium",
+    "weight": 3,
+    "minSprint": 2
+  },
+  {
+    "id": "secrets_committed_to_public_repo",
+    "name": "Secrets Committed to a Public Repo",
+    "description": "A `.env` file went into a commit six hours ago. It's a public repo. Somewhere, a bot is already scanning for exactly this.",
+    "itemOutcomes": {
+      "hotfix_script": {
+        "tier": "perfect",
+        "text": "You rotate every key in the file and force-push a patch before the scan finishes. Close.",
+        "effects": {}
+      },
+      "it_works_on_my_machine_badge": {
+        "tier": "neutral",
+        "text": "You claim it was a decoy file and hope nobody checks closely. Some of the keys were real.",
+        "effects": { "reputation": -5, "techDebt": 6 }
+      }
+    },
+    "failText": "You rotate half the keys before you lose track of which ones. The other half stay live.",
+    "failEffects": { "reputation": -7, "techDebt": 10, "runway": -6 },
+    "ignoreText": "You figure it's probably fine. It was not, in fact, probably fine.",
+    "ignoreEffects": { "reputation": -11, "techDebt": 14, "runway": -10 },
+    "danger": "high",
+    "weight": 2,
+    "minSprint": 3
+  },
+  {
+    "id": "dependency_renamed_itself",
+    "name": "A Dependency Renamed Itself",
+    "description": "A patch-version update silently renamed half its exports. Your build still passes. Your app does not.",
+    "itemOutcomes": {
+      "stack_overflow_bookmark": {
+        "tier": "perfect",
+        "text": "Someone hit this exact rename two hours ago. The fix is a one-line import change.",
+        "effects": {}
+      },
+      "hotfix_script": {
+        "tier": "neutral",
+        "text": "You pin the old version and promise yourself you'll deal with it properly later.",
+        "effects": { "techDebt": 10 }
+      }
+    },
+    "failText": "You chase the renamed exports through the diff by hand and miss two of them.",
+    "failEffects": { "techDebt": 12, "runway": -5 },
+    "ignoreText": "You ship on top of it and let the errors surface in production.",
+    "ignoreEffects": { "techDebt": 16, "runway": -9, "reputation": -4 },
+    "danger": "medium",
+    "weight": 3,
+    "minSprint": 2
+  },
+  {
+    "id": "onboarding_doc_is_a_lie",
+    "name": "The Onboarding Doc Is a Lie",
+    "description": "The onboarding doc says setup takes five minutes. It has taken forty. Step 4 references a script that was deleted eighteen months ago.",
+    "itemOutcomes": {
+      "readme_nobody_wrote": {
+        "tier": "perfect",
+        "text": "You write the missing step yourself while it's fresh. The next person owes you a coffee.",
+        "effects": { "sanity": 2 }
+      }
+    },
+    "failText": "You muscle through it undocumented and forget everything you had to do by tomorrow.",
+    "failEffects": { "sanity": -5, "coffee": -4 },
+    "ignoreText": "You leave step 4 broken for whoever's next. Statistically, that's also you.",
+    "ignoreEffects": { "sanity": -7, "coffee": -5 },
+    "danger": "low",
+    "weight": 3,
+    "minSprint": 1
+  },
+  {
+    "id": "meme_war_in_general",
+    "name": "A Meme War Breaks Out in #general",
+    "description": "Someone posted a mildly wrong take in #general. Fourteen replies in, nobody remembers the original point.",
+    "itemOutcomes": {},
+    "failText": "You wade in with a well-reasoned reply. The thread grows four more branches overnight.",
+    "failEffects": { "sanity": -6 },
+    "ignoreText": "You mute the channel. By morning, everyone's forgotten what started it.",
+    "ignoreEffects": { "sanity": 3 },
+    "ignoreIsCorrect": true,
+    "danger": "low",
+    "weight": 3,
+    "minSprint": 1
+  },
+  {
+    "id": "client_reply_all_incident",
+    "name": "The Client Hit Reply All",
+    "description": "A client hit Reply All on an internal thread they were never supposed to see. Sixty people now have opinions about your invoice.",
+    "itemOutcomes": {
+      "it_works_on_my_machine_badge": {
+        "tier": "perfect",
+        "text": "You weren't cc'd on the original thread, technically. You lean on that, hard.",
+        "effects": {}
+      },
+      "signed_nda": {
+        "tier": "neutral",
+        "text": "You cite confidentiality and steer the thread back on topic. Half the room stays annoyed.",
+        "effects": { "reputation": -3 }
+      }
+    },
+    "failText": "You reply to explain the context. This is, somehow, worse.",
+    "failEffects": { "reputation": -6, "sanity": -4 },
+    "ignoreText": "You let it play out in the thread without you. It plays out badly, and everyone notices you weren't there.",
+    "ignoreEffects": { "reputation": -9, "sanity": -5 },
+    "danger": "medium",
+    "weight": 3,
+    "minSprint": 2
   }
 ]

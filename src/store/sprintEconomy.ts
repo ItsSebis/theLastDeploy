@@ -58,9 +58,9 @@ export function dangerTierFromTechDebt(techDebt: number): EventDanger {
 
 // Chance a given day-end rolls no incident at all.
 export const PEACEFUL_NIGHT_CHANCE: Record<EventDanger, number> = {
-  low: 0.35,
-  medium: 0.15,
-  high: 0.05,
+  low: 0.25,
+  medium: 0.1,
+  high: 0.03,
 };
 
 // Soft bias multiplier applied to an event's `weight` based on how its own
